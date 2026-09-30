@@ -27,7 +27,7 @@ A mobile-first web app that builds a **personalised, progressive warm-up** befor
 
 ## Tech stack
 
-- **Laravel 13** (PHP 8.3+) with SQLite by default (MySQL/PostgreSQL work too)
+- **Laravel 13** (PHP 8.3+) with **MySQL** (tested on MySQL 8; SQLite or PostgreSQL also work by changing `DB_CONNECTION`)
 - **Blade** views and components, **vanilla ES modules** bundled by **Vite**, hand-written CSS (no UI framework)
 - No login: **progress and settings are stored in the browser (localStorage)**, so health-related notes stay on the device. Export/import is available in Settings.
 
@@ -46,16 +46,18 @@ tests/                      Readiness rules, routine engine, content safety, pag
 
 ## Getting started
 
-Requirements: PHP 8.3+ (with `pdo_sqlite`), Composer, Node 20+.
+Requirements: PHP 8.3+ (with `pdo_mysql`), Composer, Node 20+, and a MySQL server (Laragon, XAMPP, MySQL Installer…).
 
 ```bash
 git clone https://github.com/helmiabdefattah/rehab.git
 cd rehab
-composer run setup      # install, .env, key, SQLite DB, migrate + seed, npm install, build
+composer run setup      # install, .env, key, create DB + migrate + seed, npm install, build
 php artisan serve       # http://localhost:8000
 ```
 
-On Windows (e.g. `D:\sites\rehab`), make sure `extension=pdo_sqlite` and `extension=sqlite3` are enabled in `php.ini`. With Laragon/XAMPP you can point the site's document root at the `public/` folder instead of using `php artisan serve`.
+**Database:** the defaults in `.env.example` are `DB_DATABASE=rehab`, `DB_USERNAME=root` and an empty password — the usual Laragon/XAMPP setup. If your MySQL uses a password, run `copy .env.example .env` first, set `DB_USERNAME` / `DB_PASSWORD` in `.env`, then run `composer run setup`. The `rehab` database is created automatically if it doesn't exist.
+
+On Windows (e.g. `D:\sites\rehab`), check that `extension=pdo_mysql` is enabled in `php.ini` (it is by default in Laragon and XAMPP). With Laragon/XAMPP you can point the site's document root at the `public/` folder instead of using `php artisan serve`.
 
 `composer run dev` runs the server and Vite (hot reload) together.
 
@@ -65,9 +67,17 @@ Useful commands:
 
 ```bash
 php artisan db:seed --class=ExerciseSeeder   # re-load exercises/videos after editing database/data/*.php
-php artisan test                             # 56 tests
+php artisan test                             # 56 tests (uses in-memory SQLite by default)
 vendor/bin/pint                              # code style
 ```
+
+Tests run on in-memory SQLite, so they never touch your real data. If your PHP has no `pdo_sqlite`, run them against a separate MySQL database instead. In PowerShell:
+
+```powershell
+$env:DB_CONNECTION="mysql"; $env:DB_DATABASE="rehab_test"; php artisan test
+```
+
+(Create the empty `rehab_test` database first; the tests reset it on every run.)
 
 ## How the routine engine works
 
