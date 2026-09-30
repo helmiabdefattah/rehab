@@ -1,0 +1,48 @@
+// ReadyUp service worker: pages are network-first (fresh routines), static assets are cache-first.
+const CACHE = 'readyup-v1';
+const OFFLINE_PAGES = ['/', '/timer', '/exercises', '/safety'];
+
+self.addEventListener('install', (event) => {
+    event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(OFFLINE_PAGES)).catch(() => {}));
+    self.skipWaiting();
+});
+
+self.addEventListener('activate', (event) => {
+    event.waitUntil(
+        caches.keys().then((keys) => Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)))).then(() => self.clients.claim()),
+    );
+});
+
+self.addEventListener('fetch', (event) => {
+    const { request } = event;
+    const url = new URL(request.url);
+
+    if (request.method !== 'GET' || url.origin !== self.location.origin || url.pathname.startsWith('/api/')) return;
+
+    if (url.pathname.startsWith('/build/') || url.pathname.startsWith('/icons/')) {
+        event.respondWith(
+            caches.match(request).then(
+                (hit) =>
+                    hit ||
+                    fetch(request).then((res) => {
+                        const copy = res.clone();
+                        caches.open(CACHE).then((c) => c.put(request, copy));
+                        return res;
+                    }),
+            ),
+        );
+        return;
+    }
+
+    if (request.mode === 'navigate') {
+        event.respondWith(
+            fetch(request)
+                .then((res) => {
+                    const copy = res.clone();
+                    caches.open(CACHE).then((c) => c.put(request, copy));
+                    return res;
+                })
+                .catch(() => caches.match(request).then((hit) => hit || caches.match('/'))),
+        );
+    }
+});

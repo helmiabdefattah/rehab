@@ -1,0 +1,223 @@
+<?php
+
+/*
+|--------------------------------------------------------------------------
+| Sources & exercise references
+|--------------------------------------------------------------------------
+|
+| Bibliographic details were cross-checked against published reference
+| records. Items without a confirmed link have url = null and are shown as
+| a plain citation. "relevance" explains how the app uses the source and is
+| deliberately cautious: study findings are reported for the populations
+| studied and are not promises about any individual.
+*/
+
+return [
+    // ── Warm-up principles ──────────────────────────────────────────────
+    [
+        'key' => 'jeffreys-2007-ramp',
+        'topic' => 'warm-up',
+        'citation' => "Jeffreys I. Warm-up revisited: the 'RAMP' method of optimising warm-ups. Professional Strength and Conditioning. 2007;(6):12–18.",
+        'url' => null,
+        'doi' => null,
+        'publisher' => 'UK Strength and Conditioning Association',
+        'year' => 2007,
+        'relevance' => 'Raise → Activate & Mobilise → Potentiate: the framework behind the four-stage structure (heat → mobility → activation → dynamic/sport preparation).',
+    ],
+    [
+        'key' => 'fradkin-2010-warmup-meta',
+        'topic' => 'warm-up',
+        'citation' => 'Fradkin AJ, Zazryn TR, Smoliga JM. Effects of warming-up on physical performance: a systematic review with meta-analysis. J Strength Cond Res. 2010;24(1):140–148.',
+        'url' => 'https://doi.org/10.1519/JSC.0b013e3181c643a0',
+        'doi' => '10.1519/JSC.0b013e3181c643a0',
+        'publisher' => 'Journal of Strength and Conditioning Research',
+        'year' => 2010,
+        'relevance' => 'Review of warm-up studies reporting performance improvements in most of the included criteria — supports doing a structured warm-up before activity.',
+    ],
+    [
+        'key' => 'behm-2016-stretching-review',
+        'topic' => 'warm-up',
+        'citation' => 'Behm DG, Blazevich AJ, Kay AD, McHugh M. Acute effects of muscle stretching on physical performance, range of motion, and injury incidence in healthy active individuals: a systematic review. Appl Physiol Nutr Metab. 2016;41(1):1–11.',
+        'url' => 'https://doi.org/10.1139/apnm-2015-0235',
+        'doi' => '10.1139/apnm-2015-0235',
+        'publisher' => 'Applied Physiology, Nutrition, and Metabolism',
+        'year' => 2016,
+        'relevance' => 'Why the app favours dynamic, controlled mobility within a full warm-up rather than long static holds immediately before activity.',
+    ],
+    [
+        'key' => 'chaabene-2019-static-stretching',
+        'topic' => 'warm-up',
+        'citation' => 'Chaabene H, Behm DG, Negra Y, Granacher U. Acute effects of static stretching on muscle strength and power: an attempt to clarify previous caveats. Front Physiol. 2019;10:1468.',
+        'url' => 'https://doi.org/10.3389/fphys.2019.01468',
+        'doi' => '10.3389/fphys.2019.01468',
+        'publisher' => 'Frontiers in Physiology',
+        'year' => 2019,
+        'relevance' => 'Context on the duration of static stretching before exercise — short, comfortable stretching is not the focus here; controlled movement is.',
+    ],
+    [
+        'key' => 'acsm-guidelines-11th',
+        'topic' => 'warm-up',
+        'citation' => "American College of Sports Medicine; Liguori G, senior editor. ACSM's Guidelines for Exercise Testing and Prescription. 11th ed. Philadelphia (PA): Wolters Kluwer; 2021.",
+        'url' => null,
+        'doi' => null,
+        'publisher' => 'Wolters Kluwer',
+        'year' => 2021,
+        'relevance' => 'General exercise-prescription guidance, including the warm-up as a standard component of an exercise session and gradual progression of intensity.',
+    ],
+    [
+        'key' => 'nsca-essentials-4th',
+        'topic' => 'warm-up',
+        'citation' => 'Haff GG, Triplett NT, editors. Essentials of Strength Training and Conditioning. 4th ed. Champaign (IL): Human Kinetics; 2016.',
+        'url' => null,
+        'doi' => null,
+        'publisher' => 'Human Kinetics / NSCA',
+        'year' => 2016,
+        'relevance' => 'Strength & conditioning reference for general and specific warm-ups, movement-pattern rehearsal and progressive warm-up sets in the gym.',
+    ],
+
+    // ── Sports preparation ──────────────────────────────────────────────
+    [
+        'key' => 'soligard-2008-fifa11plus',
+        'topic' => 'sport',
+        'citation' => 'Soligard T, Myklebust G, Steffen K, et al. Comprehensive warm-up programme to prevent injuries in young female footballers: cluster randomised controlled trial. BMJ. 2008;337:a2469.',
+        'url' => 'https://doi.org/10.1136/bmj.a2469',
+        'doi' => '10.1136/bmj.a2469',
+        'publisher' => 'BMJ',
+        'year' => 2008,
+        'relevance' => 'Trial of the FIFA 11+ structured warm-up (running, strength, balance, plyometrics) in young female footballers. Informs the football progression; results in that population cannot be assumed for every individual.',
+    ],
+    [
+        'key' => 'fifa-11plus-official',
+        'topic' => 'sport',
+        'citation' => 'FIFA Medical Network. FIFA 11+ injury prevention programme. Zurich: FIFA.',
+        'url' => 'https://www.fifamedicalnetwork.com/',
+        'doi' => null,
+        'publisher' => 'FIFA',
+        'year' => null,
+        'relevance' => "FIFA's official medical education site, which hosts the 11+ programme materials.",
+    ],
+    [
+        'key' => 'emery-2010-youth-soccer-neuromuscular',
+        'topic' => 'sport',
+        'citation' => 'Emery CA, Meeuwisse WH. The effectiveness of a neuromuscular prevention strategy to reduce injuries in youth soccer: a cluster-randomised controlled trial. Br J Sports Med. 2010;44:555–562.',
+        'url' => 'https://doi.org/10.1136/bjsm.2010.074377',
+        'doi' => '10.1136/bjsm.2010.074377',
+        'publisher' => 'British Journal of Sports Medicine',
+        'year' => 2010,
+        'relevance' => 'Neuromuscular warm-up including balance work in youth football — background for including balance and stability drills.',
+    ],
+    [
+        'key' => 'herman-2012-neuromuscular-warmup',
+        'topic' => 'sport',
+        'citation' => 'Herman K, Barton C, Malliaras P, Morrissey D. The effectiveness of neuromuscular warm-up strategies, that require no additional equipment, for preventing lower limb injuries during sports participation: a systematic review. BMC Med. 2012;10:75.',
+        'url' => 'https://doi.org/10.1186/1741-7015-10-75',
+        'doi' => '10.1186/1741-7015-10-75',
+        'publisher' => 'BMC Medicine',
+        'year' => 2012,
+        'relevance' => 'Systematic review of equipment-free neuromuscular warm-ups in sport — why the routines mix mobility, activation, balance and progressive running.',
+    ],
+    [
+        'key' => 'lauersen-2014-exercise-injury-prevention',
+        'topic' => 'sport',
+        'citation' => 'Lauersen JB, Bertelsen DM, Andersen LB. The effectiveness of exercise interventions to prevent sports injuries: a systematic review and meta-analysis of randomised controlled trials. Br J Sports Med. 2014;48(11):871–877.',
+        'url' => 'https://doi.org/10.1136/bjsports-2013-092538',
+        'doi' => '10.1136/bjsports-2013-092538',
+        'publisher' => 'British Journal of Sports Medicine',
+        'year' => 2014,
+        'relevance' => 'Meta-analysis comparing strength, proprioception and stretching interventions in sport; supports prioritising strength/activation and balance over static stretching alone.',
+    ],
+
+    // ── Exercise technique & muscle activation ──────────────────────────
+    [
+        'key' => 'distefano-2009-gluteal-activation',
+        'topic' => 'technique',
+        'citation' => 'Distefano LJ, Blackburn JT, Marshall SW, Padua DA. Gluteal muscle activation during common therapeutic exercises. J Orthop Sports Phys Ther. 2009;39(7):532–540.',
+        'url' => 'https://doi.org/10.2519/jospt.2009.2796',
+        'doi' => '10.2519/jospt.2009.2796',
+        'publisher' => 'JOSPT',
+        'year' => 2009,
+        'relevance' => 'EMG comparison of common glute exercises (e.g. side-lying abduction, clamshell, lateral band walk, single-leg exercises) — informs the glute activation choices.',
+    ],
+    [
+        'key' => 'reiman-2012-glute-emg-review',
+        'topic' => 'technique',
+        'citation' => 'Reiman MP, Bolgla LA, Loudon JK. A literature review of studies evaluating gluteus maximus and gluteus medius activation during rehabilitation exercises. Physiother Theory Pract. 2012;28(4):257–268.',
+        'url' => 'https://doi.org/10.3109/09593985.2011.604981',
+        'doi' => '10.3109/09593985.2011.604981',
+        'publisher' => 'Physiotherapy Theory and Practice',
+        'year' => 2012,
+        'relevance' => 'Review of glute activation across exercises — supports progressing from low-load (bridge, clamshell) to standing and single-leg activation.',
+    ],
+    [
+        'key' => 'boren-2011-glute-emg',
+        'topic' => 'technique',
+        'citation' => 'Boren K, Conrey C, Le Coguic J, Paprocki L, Voight M, Robinson TK. Electromyographic analysis of gluteus medius and gluteus maximus during rehabilitation exercises. Int J Sports Phys Ther. 2011;6(3):206–223.',
+        'url' => 'https://pmc.ncbi.nlm.nih.gov/articles/PMC3201064/',
+        'doi' => null,
+        'publisher' => 'International Journal of Sports Physical Therapy',
+        'year' => 2011,
+        'relevance' => 'Further EMG data for glute exercises such as side-lying abduction, side plank and bridge variations.',
+    ],
+    [
+        'key' => 'escamilla-2001-squat-knee-biomechanics',
+        'topic' => 'technique',
+        'citation' => 'Escamilla RF. Knee biomechanics of the dynamic squat exercise. Med Sci Sports Exerc. 2001;33(1):127–141.',
+        'url' => 'https://doi.org/10.1097/00005768-200101000-00020',
+        'doi' => '10.1097/00005768-200101000-00020',
+        'publisher' => 'Medicine & Science in Sports & Exercise',
+        'year' => 2001,
+        'relevance' => 'Review of knee forces across squat depths — background for starting with controlled, partial-range squat patterns (sit-to-stand, mini squat) and progressing depth gradually.',
+    ],
+    [
+        'key' => 'mcgill-2010-core-training',
+        'topic' => 'technique',
+        'citation' => 'McGill S. Core training: evidence translating to better performance and injury prevention. Strength Cond J. 2010;32(3):33–46.',
+        'url' => 'https://doi.org/10.1519/SSC.0b013e3181df4521',
+        'doi' => '10.1519/SSC.0b013e3181df4521',
+        'publisher' => 'Strength and Conditioning Journal',
+        'year' => 2010,
+        'relevance' => 'Core-stability exercise principles behind the dead bug, bird dog and plank variations.',
+    ],
+
+    // ── Injury-aware exercise considerations ────────────────────────────
+    [
+        'key' => 'ardern-2016-return-to-sport-consensus',
+        'topic' => 'injury-aware',
+        'citation' => 'Ardern CL, Glasgow P, Schneiders A, et al. 2016 Consensus statement on return to sport from the First World Congress in Sports Physical Therapy, Bern. Br J Sports Med. 2016;50(14):853–864.',
+        'url' => 'https://doi.org/10.1136/bjsports-2016-096278',
+        'doi' => '10.1136/bjsports-2016-096278',
+        'publisher' => 'British Journal of Sports Medicine',
+        'year' => 2016,
+        'relevance' => 'Describes return to sport as a continuum (return to participation → sport → performance) — the idea behind the three levels and not auto-progressing on time alone.',
+    ],
+    [
+        'key' => 'mithoefer-2009-rts-cartilage-repair',
+        'topic' => 'injury-aware',
+        'citation' => 'Mithoefer K, Hambly K, Della Villa S, Silvers H, Mandelbaum BR. Return to sports participation after articular cartilage repair in the knee: scientific evidence. Am J Sports Med. 2009;37(Suppl 1):167S–176S.',
+        'url' => null,
+        'doi' => null,
+        'publisher' => 'American Journal of Sports Medicine',
+        'year' => 2009,
+        'relevance' => 'Background reading: return to sport after knee cartilage procedures varies with the procedure and the individual. The app makes no procedure-specific assumptions — follow the restrictions given by your own surgeon/physiotherapist.',
+    ],
+    [
+        'key' => 'clevelandclinic-piriformis-syndrome',
+        'topic' => 'injury-aware',
+        'citation' => 'Cleveland Clinic. Piriformis syndrome [Internet]. Cleveland (OH): Cleveland Clinic.',
+        'url' => 'https://my.clevelandclinic.org/health/diseases/23495-piriformis-syndrome',
+        'doi' => null,
+        'publisher' => 'Cleveland Clinic',
+        'year' => null,
+        'relevance' => 'Patient information on the piriformis muscle and piriformis-related buttock pain — context for the gentle, non-forced approach in the Hip & Glute section.',
+    ],
+    [
+        'key' => 'bull-2020-who-guidelines',
+        'topic' => 'injury-aware',
+        'citation' => 'Bull FC, Al-Ansari SS, Biddle S, et al. World Health Organization 2020 guidelines on physical activity and sedentary behaviour. Br J Sports Med. 2020;54(24):1451–1462.',
+        'url' => 'https://doi.org/10.1136/bjsports-2020-102955',
+        'doi' => '10.1136/bjsports-2020-102955',
+        'publisher' => 'British Journal of Sports Medicine',
+        'year' => 2020,
+        'relevance' => 'General physical-activity recommendations, including starting with smaller amounts and gradually increasing frequency, intensity and duration.',
+    ],
+];

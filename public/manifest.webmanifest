@@ -1,0 +1,21 @@
+{
+    "name": "ReadyUp — Warm-Up & Movement Prep",
+    "short_name": "ReadyUp",
+    "description": "Personalised, knee- and hip-aware warm-ups before the gym, running, football and general exercise.",
+    "start_url": "/",
+    "scope": "/",
+    "display": "standalone",
+    "orientation": "portrait",
+    "background_color": "#0a0e13",
+    "theme_color": "#0a0e13",
+    "icons": [
+        { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+        { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+        { "src": "/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+        { "src": "/icons/icon.svg", "sizes": "any", "type": "image/svg+xml" }
+    ],
+    "shortcuts": [
+        { "name": "Quick 10-min warm-up", "url": "/warm-up/quick/10" },
+        { "name": "Training timer", "url": "/timer" }
+    ]
+}
