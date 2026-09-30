@@ -1,6 +1,6 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "helmiabdefattah/warmup-prep",
+    "name": "helmiabdefattah/rehab",
     "type": "project",
     "description": "ReadyUp — a mobile-first warm-up & pre-workout preparation web app (knee- and hip/glute-aware).",
     "keywords": [
@@ -80,6 +80,9 @@
     },
     "config": {
         "optimize-autoloader": true,
+        "platform": {
+            "php": "8.3.0"
+        },
         "preferred-install": "dist",
         "sort-packages": true,
         "allow-plugins": {

@@ -49,10 +49,13 @@ tests/                      Readiness rules, routine engine, content safety, pag
 Requirements: PHP 8.3+ (with `pdo_sqlite`), Composer, Node 20+.
 
 ```bash
-cd warmup-prep
+git clone https://github.com/helmiabdefattah/rehab.git
+cd rehab
 composer run setup      # install, .env, key, SQLite DB, migrate + seed, npm install, build
 php artisan serve       # http://localhost:8000
 ```
+
+On Windows (e.g. `D:\sites\rehab`), make sure `extension=pdo_sqlite` and `extension=sqlite3` are enabled in `php.ini`. With Laragon/XAMPP you can point the site's document root at the `public/` folder instead of using `php artisan serve`.
 
 `composer run dev` runs the server and Vite (hot reload) together.
 
@@ -98,15 +101,6 @@ Prefer short single-exercise videos from physiotherapists, sports-medicine organ
 ## Privacy
 
 Session history (including pain notes) and settings live only in the browser's localStorage. Nothing is sent to the server except the routine request (activity, time, intensity, level, equipment and readiness answers), which is computed and not stored.
-
-## Moving the app into its own repository
-
-This app currently lives in the `warmup-prep/` folder. To give it its own repository with history:
-
-```bash
-git subtree split --prefix=warmup-prep -b warmup-prep-main
-git push git@github.com:<you>/warmup-prep.git warmup-prep-main:main
-```
 
 ## Final quality-control checklist
 
