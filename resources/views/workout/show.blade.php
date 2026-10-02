@@ -26,9 +26,15 @@
             <span class="train-step">2</span>
             <div class="train-part-body">
                 <h2>Workout</h2>
-                <p class="muted small">{{ $exercises->count() }} exercises for your {{ $activity->shortLabel() }} session. Rest as prescribed between sets — use the <a href="{{ route('timer') }}">rest timer</a>. Warm up first; add weight only with clean technique.</p>
+                <p class="muted small">{{ $exercises->count() }} exercises for your {{ $activity->shortLabel() }} session. Start the guided workout to step through each exercise set by set, with a rest timer between sets. Warm up first; add weight only with clean technique.</p>
+                <div class="row">
+                    <button type="button" class="btn btn-primary" data-start-workout><x-icon name="play" fill /> Start {{ $activity->shortLabel() }} workout</button>
+                    <a class="btn btn-ghost" href="{{ route('timer') }}"><x-icon name="timer" /> Rest timer</a>
+                </div>
             </div>
         </div>
+
+        <script type="application/json" id="workout-data" data-split="{{ $split }}" data-label="{{ $activity->shortLabel() }}">@json($exercises->map->toClientArray())</script>
 
         <div class="card-grid" style="margin-top:16px">
             @foreach ($exercises as $exercise)
@@ -37,10 +43,11 @@
         </div>
 
         <div class="row section">
-            <a class="btn btn-outline" href="{{ route('timer') }}"><x-icon name="timer" /> Open rest timer</a>
             <a class="btn btn-ghost" href="{{ route('progress') }}"><x-icon name="chart" /> My progress</a>
         </div>
     </section>
+
+    @include('warmup.partials.workout-templates')
 
     <section class="section">
         <div class="callout callout-info">
