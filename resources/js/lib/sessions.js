@@ -17,10 +17,10 @@ export const PAIN_AREAS = {
     other: 'Other',
 };
 export const ACTIVITIES = {
-    gym: { emoji: '🏋️', label: 'Gym / Strength' },
-    running: { emoji: '🏃', label: 'Running' },
-    football: { emoji: '⚽', label: 'Football' },
-    general: { emoji: '🚶', label: 'General' },
+    push: { emoji: '💪', label: 'Push' },
+    pull: { emoji: '🪢', label: 'Pull' },
+    legs: { emoji: '🦵', label: 'Legs' },
+    'cardio-core': { emoji: '🫀', label: 'Cardio & Core' },
 };
 
 function isValid(s) {

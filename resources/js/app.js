@@ -1,7 +1,7 @@
 import { $$ } from './lib/dom.js';
 import { applyTheme, prefsQuery } from './lib/settings.js';
 import { unlockAudio } from './lib/cues.js';
-import { initVideoButtons } from './components/video-modal.js';
+import { initAnimations, initAnimationButtons } from './components/exercise-animation.js';
 import { initHome } from './pages/home.js';
 import { initBuilder } from './pages/builder.js';
 import { initLibrary } from './pages/library.js';
@@ -20,9 +20,10 @@ const pages = {
 
 function boot() {
     applyTheme();
-    initVideoButtons();
+    initAnimations();
+    initAnimationButtons();
 
-    // Quick / focus warm-ups are built on the server: pass the saved level, equipment and transition time.
+    // Quick warm-ups are built on the server: pass the saved level, equipment and transition time.
     $$('[data-quick-link]').forEach((a) => {
         const url = new URL(a.href, location.origin);
         url.search = prefsQuery();

@@ -16,7 +16,7 @@ class ExerciseController extends Controller
         $filters = [
             'q' => trim((string) $request->query('q', '')),
             'tag' => (string) $request->query('tag', ''),
-            'stage' => (string) $request->query('stage', ''),
+            'section' => (string) $request->query('section', ''),
             'activity' => (string) $request->query('activity', ''),
         ];
 
@@ -69,7 +69,7 @@ class ExerciseController extends Controller
             return false;
         }
 
-        if ($filters['stage'] !== '' && $exercise->stage->value !== $filters['stage']) {
+        if ($filters['section'] !== '' && $exercise->section !== $filters['section']) {
             return false;
         }
 

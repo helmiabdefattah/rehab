@@ -12,7 +12,7 @@ export function initLibrary() {
     const apply = () => {
         const q = form.q.value.trim().toLowerCase();
         const tag = form.tag.value;
-        const stage = form.stage.value;
+        const section = form.section.value;
         const activity = form.activity.value;
         let shown = 0;
 
@@ -20,7 +20,7 @@ export function initLibrary() {
             const ok =
                 (!q || card.dataset.search.includes(q)) &&
                 (!tag || card.dataset.tags.split(' ').includes(tag)) &&
-                (!stage || card.dataset.stageKey === stage) &&
+                (!section || card.dataset.section === section) &&
                 (!activity || card.dataset.activities.split(' ').includes(activity));
             card.hidden = !ok;
             if (ok) shown++;
@@ -30,7 +30,7 @@ export function initLibrary() {
         empty.hidden = shown > 0;
 
         const params = new URLSearchParams();
-        [['q', q], ['tag', tag], ['stage', stage], ['activity', activity]].forEach(([k, v]) => v && params.set(k, v));
+        [['q', q], ['tag', tag], ['section', section], ['activity', activity]].forEach(([k, v]) => v && params.set(k, v));
         history.replaceState(null, '', `${location.pathname}${params.toString() ? `?${params}` : ''}`);
     };
 
@@ -44,7 +44,7 @@ export function initLibrary() {
         e.preventDefault();
         form.reset();
         form.q.value = '';
-        ['tag', 'stage', 'activity'].forEach((k) => (form[k].value = ''));
+        ['tag', 'section', 'activity'].forEach((k) => (form[k].value = ''));
         apply();
     });
 }

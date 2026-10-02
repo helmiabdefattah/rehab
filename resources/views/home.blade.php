@@ -1,11 +1,26 @@
 <x-layout page="home">
     <section class="page-head">
         <span class="eyebrow" data-greeting>Ready to move</span>
-        <h1>Prepare your body before you train.</h1>
-        <p>Personalised warm-ups that build from general heat to mobility, activation and sport-specific preparation — with extra care for the knee and hip &amp; glute.</p>
+        <h1>Train smarter — warm up right, then work out.</h1>
+        <p>Pick what you’re training today. You get a warm-up built for those exact muscles — so you perform at your best and cut the risk of injury — then the workout itself. Every move has a looping animated demo.</p>
         <div class="row">
-            <span class="badge badge-ok" data-level-badge>Level 1 · Re-entry</span>
             <span class="badge" data-last-session hidden></span>
+        </div>
+    </section>
+
+    <section class="section" aria-labelledby="split-title">
+        <div class="section-head">
+            <h2 id="split-title">What are you training today?</h2>
+        </div>
+        <p class="muted small">Choose your split. Each one opens its targeted warm-up and the workout exercises.</p>
+        <div class="activity-grid">
+            @foreach ($activities as $activity)
+                <a class="activity-tile" href="{{ route('train', $activity->value) }}">
+                    <span class="emoji" aria-hidden="true">{{ $activity->emoji() }}</span>
+                    <strong>{{ $activity->shortLabel() }}</strong>
+                    <small>{{ $activity->description() }}</small>
+                </a>
+            @endforeach
         </div>
     </section>
 
@@ -14,7 +29,7 @@
         <a class="hero-quick" href="{{ route('warmup.quick', 10) }}" data-quick-link>
             <div>
                 <strong>⚡ QUICK 10-MIN WARM-UP</strong>
-                <span>Balanced routine · starts immediately</span>
+                <span>Balanced full-body routine · starts immediately</span>
             </div>
             <span class="play"><x-icon name="play" fill /></span>
         </a>
@@ -28,39 +43,17 @@
         </div>
     </section>
 
-    <section class="section" aria-labelledby="build-title">
-        <div class="section-head">
-            <h2 id="build-title">Build My Warm-Up</h2>
-            <a href="{{ route('warmup.builder') }}" class="small">Customise →</a>
-        </div>
-        <p class="muted small">What are you about to do? We’ll ask how you feel today and adjust the routine.</p>
-        <div class="activity-grid">
-            @foreach ($activities as $activity)
-                <a class="activity-tile" href="{{ route('warmup.builder', ['activity' => $activity->value]) }}">
-                    <span class="emoji" aria-hidden="true">{{ $activity->emoji() }}</span>
-                    <strong>{{ $activity->label() }}</strong>
-                    <small>{{ $activity->description() }}</small>
-                </a>
-            @endforeach
-        </div>
-    </section>
-
-    <section class="section" aria-labelledby="focus-title">
-        <div class="section-head">
-            <h2 id="focus-title">Focused preparation</h2>
-        </div>
-        <div class="grid grid-md-2">
-            <a class="card card-link" href="{{ route('warmup.focus', 'knee') }}">
-                <span class="eyebrow">{{ $focus['knee']['emoji'] }} Knee</span>
-                <h3>Knee Preparation</h3>
-                <p class="muted small">Ankle mobility, calf raises, controlled squat patterns, step-ups and balance — low impact, progressive.</p>
-            </a>
-            <a class="card card-link" href="{{ route('warmup.focus', 'hip') }}">
-                <span class="eyebrow">{{ $focus['hip']['emoji'] }} Hip &amp; Glute</span>
-                <h3>Hip &amp; Glute Preparation</h3>
-                <p class="muted small">Glute activation, hip rotation and stability. Controlled mobility — never forcing a painful piriformis stretch.</p>
-            </a>
-        </div>
+    <section class="section grid grid-md-2">
+        <a class="card card-link" href="{{ route('warmup.builder') }}">
+            <span class="eyebrow">🔥 Warm-up</span>
+            <h3>Build My Warm-Up</h3>
+            <p class="muted small">Choose a split, time and intensity. The routine progresses from general heat → mobility → activation → movement rehearsal for the muscles you’re about to train.</p>
+        </a>
+        <a class="card card-link" href="{{ route('exercises.index') }}">
+            <span class="eyebrow">📚 Library</span>
+            <h3>Exercise Library</h3>
+            <p class="muted small">Every warm-up and workout exercise with technique, mistakes, progressions and an animated demonstration.</p>
+        </a>
     </section>
 
     <section class="section grid grid-md-2">
@@ -72,16 +65,16 @@
         <a class="card card-link" href="{{ route('progress') }}">
             <span class="eyebrow">📈 My Progress</span>
             <h3 data-progress-headline>No sessions yet</h3>
-            <p class="muted small" data-progress-sub>Complete a warm-up to start tracking sessions, readiness and how you felt.</p>
+            <p class="muted small" data-progress-sub>Complete a warm-up to start tracking your sessions and how you felt.</p>
         </a>
     </section>
 
     <section class="section">
-        <div class="callout callout-warn">
+        <div class="callout callout-info">
             <x-icon name="shield" />
             <div>
-                <h3>Previous injury considerations</h3>
-                <p class="small">Completing rehabilitation doesn’t mean every movement should immediately be done at maximum intensity. Keep exercises pain-free or within an acceptable, non-worsening range, and stop if you feel sharp pain, instability, locking or significant swelling.</p>
+                <h3>Warm up before you lift</h3>
+                <p class="small">A targeted warm-up raises your temperature, primes the joints and switches on the right muscles so you’re stronger and better protected in your working sets. Use good technique and stop if you feel sharp pain.</p>
                 <a href="{{ route('safety') }}" class="small">Read Safety &amp; Guidelines →</a>
             </div>
         </div>

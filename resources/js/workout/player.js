@@ -3,11 +3,9 @@ import { sound, vibrate, speak, countdownBeep, unlockAudio } from '../lib/cues.j
 import { keepAwake, releaseAwake } from '../lib/wakelock.js';
 import { getSettings, saveSettings } from '../lib/settings.js';
 import { clock, duration } from '../lib/format.js';
-import { $, esc, cloneTemplate, setIcon, icon } from '../lib/dom.js';
+import { $, esc, cloneTemplate, setIcon } from '../lib/dom.js';
 import { write, remove } from '../lib/store.js';
-import { openVideo, closeVideo } from '../components/video-modal.js';
-
-const STAGE_ICONS = { heat: 'flame', mobility: 'rotate', activation: 'target', dynamic: 'activity' };
+import { openAnimation, closeAnimation, animationSvg } from '../components/exercise-animation.js';
 
 /**
  * Full-screen Workout Mode.
@@ -155,7 +153,7 @@ export class WorkoutPlayer {
                 this.renderToggle();
                 return this.startItem(this.index, { skipReady: true });
             case 'video':
-                return this.showVideo();
+                return this.showAnimation();
             case 'sound':
                 saveSettings({ sound: !getSettings().sound });
                 return this.renderSoundButton();
@@ -192,12 +190,12 @@ export class WorkoutPlayer {
         this.startItem(Math.max(0, this.index - 1));
     }
 
-    showVideo() {
-        const video = this.items[this.index]?.exercise?.video;
-        if (!video) return;
+    showAnimation() {
+        const anim = this.items[this.index]?.exercise?.animation;
+        if (!anim) return;
         const wasRunning = !this.paused;
         if (getSettings().pauseOnVideo && wasRunning) this.togglePause(true);
-        openVideo(video, {
+        openAnimation(anim, {
             onClose: () => {
                 if (getSettings().pauseOnVideo && wasRunning) this.togglePause(false);
             },
@@ -248,7 +246,7 @@ export class WorkoutPlayer {
 
     finish(early, { fromBack = false } = {}) {
         this.countdown?.stop();
-        closeVideo();
+        closeAnimation();
         releaseAwake();
         remove('activeWorkout');
         document.removeEventListener('keydown', this.onKey);
@@ -296,18 +294,12 @@ export class WorkoutPlayer {
         $('[data-slot="cue"]', el).textContent = item.cue || item.reps_label || '';
         $('[data-slot="steps"]', el).innerHTML = (item.exercise.instructions || []).map((s) => `<li>${esc(s)}</li>`).join('');
 
-        const video = item.exercise.video;
+        const anim = item.exercise.animation;
         const demo = $('[data-slot="demo"]', el);
         demo.innerHTML = `
-            <button type="button" class="ex-thumb" data-action="video" data-stage="${esc(item.stage)}" aria-label="Watch video: ${esc(item.name)}">
-                <span class="ex-thumb-fallback">${icon(STAGE_ICONS[item.stage] || 'target')}<span>${esc(item.stage_label)}</span></span>
-                ${video.thumbnail ? `<img src="${esc(video.thumbnail)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()"><span class="play-badge">${icon('play', true)}</span>` : ''}
+            <button type="button" class="ex-anim" data-action="video" data-stage="${esc(item.stage)}" aria-label="View animation: ${esc(item.name)}">
+                ${animationSvg(anim.pattern)}
             </button>`;
-        const videoBtn = $('[data-action="video"].btn-video', el);
-        $('[data-slot="video-label"]', el).textContent = video.embed ? 'Watch Video' : 'Find a Video';
-        setIcon(videoBtn.querySelector('svg'), video.embed ? 'play' : 'search');
-        videoBtn.querySelector('svg').classList.toggle('icon-fill', !!video.embed);
-        videoBtn.classList.toggle('is-search', !video.embed);
 
         $('[data-slot="next"]', el).textContent = next ? next.name : 'Finish 🎉';
         $('[data-slot="next-dur"]', el).textContent = next ? clock(next.seconds) : '';

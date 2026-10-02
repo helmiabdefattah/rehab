@@ -19,7 +19,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta name="description" content="{{ $description ?? 'Personalised, knee- and hip-aware warm-up and movement preparation before the gym, running, football and general exercise.' }}">
+    <meta name="description" content="{{ $description ?? 'Muscle-specific warm-ups and workouts for your training split — Push, Pull, Legs and Cardio & Core — with looping animated demonstrations.' }}">
     <meta name="theme-color" content="#0a0e13">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
@@ -85,7 +85,7 @@
                     <a href="{{ route('sources') }}">Sources & Evidence</a>
                     <a href="{{ route('settings') }}">Settings</a>
                 </nav>
-                <p class="disclaimer">ReadyUp is an exercise and warm-up guide, not a medical device or a substitute for individualised medical or physiotherapy advice. Stop if you experience significant pain, instability, locking, swelling or other concerning symptoms and seek professional assessment.</p>
+                <p class="disclaimer">ReadyUp is an exercise, warm-up and workout guide, not a medical device or a substitute for individualised medical or physiotherapy advice. Warm up before training, use good technique, and stop if you experience sharp pain, dizziness or other concerning symptoms.</p>
             </footer>
         </main>
     </div>
@@ -101,28 +101,17 @@
 
     <div id="toast-host" class="toast-host" aria-live="polite" aria-atomic="true"></div>
 
-    <template id="video-modal-template">
-        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="video-modal-title">
+    <template id="animation-modal-template">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="animation-modal-title">
             <div class="modal-panel">
                 <div class="modal-head">
-                    <h2 id="video-modal-title" data-slot="title"></h2>
-                    <button type="button" class="icon-btn" data-close aria-label="Close video"><x-icon name="x" /></button>
+                    <h2 id="animation-modal-title" data-slot="title"></h2>
+                    <button type="button" class="icon-btn" data-close aria-label="Close animation"><x-icon name="x" /></button>
                 </div>
                 <div class="modal-body stack">
-                    <div class="video-frame" data-slot="frame"></div>
-                    <div data-slot="empty" hidden class="callout callout-info">
-                        <x-icon name="info" />
-                        <div>
-                            <h3>No verified video yet</h3>
-                            <p>A demonstration video for this exercise hasn’t been verified yet, so none is embedded (the app never invents video links). Use the search below and prefer physiotherapy or sports-medicine channels. Follow the written steps on the card.</p>
-                        </div>
-                    </div>
-                    <p class="video-source" data-slot="meta"></p>
-                    <p class="small muted" data-slot="note" hidden></p>
-                    <div class="row">
-                        <a class="btn btn-outline btn-sm" data-slot="open" target="_blank" rel="noopener"><x-icon name="external" /> Open on YouTube</a>
-                        <a class="btn btn-ghost btn-sm" data-slot="search" target="_blank" rel="noopener"><x-icon name="search" /> Search YouTube</a>
-                    </div>
+                    <div class="anim-stage" data-slot="stage"></div>
+                    <p class="anim-ar" dir="rtl" lang="ar" data-slot="ar"></p>
+                    <p class="muted small" data-slot="reps"></p>
                 </div>
             </div>
         </div>

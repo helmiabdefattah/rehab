@@ -20,15 +20,14 @@
 
         <header class="page-head">
             <span class="eyebrow">Build My Warm-Up</span>
-            <h1 data-step-title>What are you about to do?</h1>
-            <p class="muted" data-step-sub>Choose your activity. The routine progresses from general heat → mobility → activation → dynamic, activity-specific preparation.</p>
+            <h1 data-step-title>What are you training today?</h1>
+            <p class="muted" data-step-sub>Choose your split. The warm-up primes exactly those muscles — heat → mobility → activation → movement rehearsal.</p>
         </header>
 
         <ol class="wizard-steps" aria-label="Steps">
-            <li data-step-dot="1" class="is-current"><span></span><small>Activity</small></li>
+            <li data-step-dot="1" class="is-current"><span></span><small>Split</small></li>
             <li data-step-dot="2"><span></span><small>Session</small></li>
-            <li data-step-dot="3"><span></span><small>Readiness</small></li>
-            <li data-step-dot="4"><span></span><small>Routine</small></li>
+            <li data-step-dot="3"><span></span><small>Routine</small></li>
         </ol>
 
         <form data-builder-form novalidate>
@@ -38,7 +37,7 @@
                     @foreach ($activities as $activity)
                         <button type="button" class="activity-tile" data-activity="{{ $activity->value }}" aria-pressed="false">
                             <span class="emoji" aria-hidden="true">{{ $activity->emoji() }}</span>
-                            <strong>{{ $activity->label() }}</strong>
+                            <strong>{{ $activity->shortLabel() }}</strong>
                             <small>{{ $activity->description() }}</small>
                         </button>
                     @endforeach
@@ -86,40 +85,8 @@
                 </div>
             </section>
 
-            {{-- STEP 3 — Daily readiness check --}}
-            <section class="wizard-panel stack" data-step="3" hidden>
-                <div class="card">
-                    <div class="row" style="justify-content:space-between">
-                        <h2 style="margin:0">How do you feel today?</h2>
-                        <button type="button" class="btn btn-ghost btn-sm" data-all-no>No to all</button>
-                    </div>
-                    <div data-questions>
-                        @foreach ($questions as $key => $question)
-                            <div class="question" data-question="{{ $key }}">
-                                <p>{{ $loop->iteration }}. {{ $question }}</p>
-                                <div class="yes-no" role="group" aria-label="{{ $question }}">
-                                    <button type="button" data-value="0" aria-pressed="false">No</button>
-                                    <button type="button" data-value="1" aria-pressed="false">Yes</button>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                </div>
-
-                <div class="card stack" style="--stack-gap:8px">
-                    <div class="score-display">
-                        <label for="readiness-score" class="field-label">8. How do you rate your readiness today?</label>
-                        <output for="readiness-score" data-score-out>7</output>
-                    </div>
-                    <input type="range" id="readiness-score" min="1" max="10" step="1" value="7" data-score>
-                    <div class="score-scale"><span>1 · Not ready</span><span>10 · Fully ready</span></div>
-                </div>
-
-                <p class="small muted">This check adapts today’s warm-up only. It does not diagnose anything.</p>
-            </section>
-
-            {{-- STEP 4 — Generated routine --}}
-            <section class="wizard-panel" data-step="4" hidden>
+            {{-- STEP 3 — Generated routine --}}
+            <section class="wizard-panel" data-step="3" hidden>
                 <div data-routine-loading class="empty"><div class="big">⏳</div><p>Building your warm-up…</p></div>
                 <div data-routine-error hidden class="callout callout-danger">
                     <x-icon name="alert" />

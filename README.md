@@ -1,8 +1,8 @@
-# ReadyUp — Warm-Up & Movement Preparation (Laravel)
+# ReadyUp — Warm-Up & Workout by Training Split (Laravel)
 
-A mobile-first web app that builds a **personalised, progressive warm-up** before the gym, running, football or general exercise. It is designed for an adult who has **completed rehabilitation** after a previous knee cartilage surgery and a previous piriformis / glute injury. It gives extra attention to knee preparation, glute activation, hip mobility and stability, and a gradual return to impact.
+A mobile-first web app organised around your **training split**: **Push**, **Pull**, **Legs** and **Cardio & Core**. Pick what you are training today and you get a **warm-up built for exactly those muscles** — so you perform at your best and cut the risk of injury — followed by **the workout itself**. Every exercise ships with a built-in **looping animated demonstration** (inline SVG, no videos), so the app works offline.
 
-> **Medical disclaimer** — This application is an exercise and warm-up guide, not a medical device or substitute for individualized medical or physiotherapy advice. Because the user has a history of knee cartilage surgery and a previous Piriformis/Glute injury, exercise selection and progression should respect any restrictions previously provided by their healthcare professional. Stop if you experience significant pain, instability, locking, swelling, or other concerning symptoms and seek professional assessment.
+> **Disclaimer** — ReadyUp is an exercise, warm-up and workout guide, not a medical device or a substitute for individualised medical or physiotherapy advice. The exercises and set/rep ranges are general suggestions — adapt them to your own program, equipment and experience. Warm up before training, use good technique, and stop if you experience sharp pain, dizziness or other concerning symptoms.
 
 ---
 
@@ -10,19 +10,19 @@ A mobile-first web app that builds a **personalised, progressive warm-up** befor
 
 | Area | What it does |
 |---|---|
-| **Home** | ⚡ Quick 10-min warm-up (starts immediately), ⚡ 5-min Express / 10-min Standard / 15-min Complete, activity tiles (🏋️ Gym, 🏃 Running, ⚽ Football, 🚶 General), Knee and Hip & Glute sections, training timer, progress snapshot |
-| **Build My Warm-Up** | 4-step wizard: activity → intensity (light/moderate/high) + time (5/10/15/20 min) + level (1–3) + equipment → **daily readiness check** (7 questions + 1–10 score) → generated routine preview |
-| **Routine engine** | Four stages — *General heat → Dynamic mobility → Activation & stability → Dynamic & sport preparation*. The engine picks exercises by suitability (level, intensity, impact, equipment, reported symptoms) and fits the routine exactly to the chosen minutes, including transitions |
-| **Readiness logic** | Good readiness → normal routine. Stiffness only / 4–6 → more mobility and activation, moderate caps. Pain, swelling, instability, pain on walking/stairs, or ≤3 → caution message, light and low-impact only, knee- or hip-loading drills removed. Never diagnoses the user or labels them as injured |
-| **Workout Mode** | Full-screen, minimal text: big countdown, exercise name, demonstration thumbnail, ▶ Watch Video, progress bars, next-exercise preview, Pause / Skip / Previous / Restart, "switch sides" cue, 3-2-1 beeps, vibration, optional voice cues, screen wake lock, keyboard shortcuts, resume after reload |
-| **Post-session feedback** | 😊 Good / 😐 Okay / 😟 Uncomfortable, pain yes/no → Knee / Hip / Glute / Piriformis area / Ankle / Other, notes. Records only and suggests reducing intensity or seeking advice; no diagnosis |
+| **Home** | Split tiles (💪 Push, 🪢 Pull, 🦵 Legs, 🫀 Cardio & Core), ⚡ Quick full-body warm-up (5 / 10 / 15 min, starts immediately), Build My Warm-Up, library, training timer and a progress snapshot |
+| **Split hub** (`/train/{split}`) | Two parts per split: **1. Warm-up** (a split-specific routine) and **2. Workout** (the training exercises with sets × reps × rest and a rest-timer link) |
+| **Build My Warm-Up** | 3-step wizard: split → intensity (light/moderate/high) + time (5/10/15/20 min) + level (1–3) + equipment → generated routine preview |
+| **Routine engine** | Four stages — *General heat → Dynamic mobility → Activation & stability → Movement rehearsal*. The engine picks exercises by suitability (level, intensity, impact, equipment) and fits the routine exactly to the chosen minutes, including transitions |
+| **Animated demonstrations** | Every exercise has a looping stick-figure SVG keyed to its movement pattern (press, pull, squat, hinge, lunge, bridge, plank, cardio…). No external video, works offline, themed for light/dark |
+| **Workout Mode** | Full-screen, minimal text: big countdown, exercise name, inline animation, View-animation modal, progress bars, next-exercise preview, Pause / Skip / Previous / Restart, "switch sides" cue, 3-2-1 beeps, vibration, optional voice cues, screen wake lock, keyboard shortcuts, resume after reload |
+| **Post-session feedback** | 😊 Good / 😐 Okay / 😟 Uncomfortable, pain yes/no → area, notes. Records only; no diagnosis |
 | **Training Timer** | Rest timer between sets (presets, +15 s, auto set counter), interval timer (work/rest/rounds, presets such as 20/10 × 8, EMOM), stopwatch with laps, countdown |
-| **Exercise Library** | 40 exercises with English + Arabic names, purpose, why it's included, steps, common mistakes, safety notes, progression / regression, tags, suitable activities and a video. Instant search and filters |
-| **Knee Preparation / Hip & Glute Preparation** | Dedicated sections with guidance and 5- or 10-minute focused routines |
-| **My Progress** | Warm-ups completed, total sessions, average readiness, exercises completed, weekly chart, activity breakdown, how you felt, pain reports, session history, and a **progression check** that never moves you up automatically |
-| **Safety & Guidelines** | Previous-injury considerations, stop signs, readiness rules, levels, knee and hip guidance |
-| **Sources & Evidence** | 20 references grouped by topic and a table of every exercise video with its verification status |
-| **Settings** | Level, default equipment, get-ready seconds, sound, 3-2-1 beeps, voice cues, vibration, keep-awake, pause-on-video, dark/light/system theme, export/import/delete data |
+| **Exercise Library** | 72 warm-up and workout exercises with English + Arabic names, purpose, why it's included, steps, common mistakes, safety notes, progression / regression, tags and an animated demo. Filter by **part** (warm-up / workout) and **training split**, instant search |
+| **My Progress** | Sessions completed, total sessions, exercises completed, weekly chart, split breakdown, how you felt, session history |
+| **Safety & Guidelines** | Why to warm up per split, stop signs, the four warm-up stages, intensity levels |
+| **Sources & Evidence** | References grouped by topic |
+| **Settings** | Level, default equipment, get-ready seconds, sound, 3-2-1 beeps, voice cues, vibration, keep-awake, dark/light/system theme, export/import/delete data |
 | **PWA** | Installable (Add to Home Screen), offline fallback for key pages over HTTPS |
 
 ## Tech stack
@@ -33,15 +33,15 @@ A mobile-first web app that builds a **personalised, progressive warm-up** befor
 
 ```
 app/
-  Enums/                    Activity, Intensity, Level, Stage, Impact, ReadinessStatus
-  Services/Warmup/          ReadinessEvaluator, RoutineBuilder (+ request/result value objects)
-  Http/Controllers/         Pages + Api/RoutineController (POST /api/routines)
-  Console/Commands/         videos:verify, videos:set
-config/warmup.php           Stage budgets, activity/focus templates, equipment
-database/data/              exercises.php (40 exercises), videos.php (curated videos), sources.php
-resources/views/            Blade pages and components (exercise card, layout, workout templates)
+  Enums/                    Activity (training split), Intensity, Level, Stage, Impact
+  Services/Warmup/          RoutineBuilder (+ request/result value objects)
+  Http/Controllers/         Pages + WorkoutController (/train/{split}) + Api/RoutineController (POST /api/routines)
+config/warmup.php           Stage budgets, per-split warm-up templates, workout plans, equipment
+database/data/              exercises.php (72 warm-up + workout exercises), sources.php
+resources/js/components/    exercise-animation.js (looping SVG movement demos)
+resources/views/            Blade pages and components (exercise card, layout, workout templates, split hub)
 resources/js/               lib/ (timers, cues, storage), workout/ (player, finish), pages/
-tests/                      Readiness rules, routine engine, content safety, pages, API, commands
+tests/                      Routine engine, content, split enum, pages, API
 ```
 
 ## Getting started
@@ -67,7 +67,7 @@ Useful commands:
 
 ```bash
 php artisan db:seed --class=ExerciseSeeder   # re-load exercises/videos after editing database/data/*.php
-php artisan test                             # 56 tests (uses in-memory SQLite by default)
+php artisan test                             # full suite (uses in-memory SQLite by default)
 vendor/bin/pint                              # code style
 ```
 
@@ -81,40 +81,25 @@ $env:DB_CONNECTION="mysql"; $env:DB_DATABASE="rehab_test"; php artisan test
 
 ## How the routine engine works
 
-1. **Readiness** (`ReadinessEvaluator`) turns the answers into caps on level, intensity and impact, plus symptom groups (`knee`, `hip`) that remove specific exercises (for example step-ups, lunges and skipping for knee symptoms; 90/90 and figure-4 for hip or piriformis symptoms).
-2. **Templates** (`config/warmup.php`) list, per activity and stage, the candidate exercises for each slot in order of preference, with a priority (1 = essential … 4 = only if time allows). The order inside a stage creates the progression. For example, running goes marching → A-skip → easy jog → build-ups, and football goes jog → lateral shuffle → build-ups → change of direction → ball work.
-3. **Selection** picks the first candidate that suits today's level, intensity, impact cap, available equipment and readiness. Substitutions are explained under "Adjustments made".
-4. **Timing** admits slots by priority into each stage's time budget, then scales durations within each exercise's min/max so the whole routine, transitions included, matches the chosen minutes exactly. This is tested across all 288 combinations.
+1. **Templates** (`config/warmup.php`) list, per split and stage, the candidate warm-up exercises for each slot in order of preference, with a priority (1 = essential … 4 = only if time allows). The order inside a stage creates the progression. For example, Cardio & Core goes A-march → A-skip → easy jog → build-ups, and Push rehearses shoulder prep → activation → ramp-up sets.
+2. **Selection** picks the first candidate that suits today's level, intensity, impact cap and available equipment. Substitutions are explained under "Adjustments made".
+3. **Timing** admits slots by priority into each stage's time budget, then scales durations within each exercise's min/max so the whole routine, transitions included, matches the chosen minutes exactly. This is tested across every split / duration / intensity / level / equipment combination.
 
-**Levels** — 1 Re-entry (low impact, controlled), 2 Conditioning (moderate dynamic, greater range), 3 Performance Preparation (controlled acceleration, lateral movement, activity-specific). Level-2+ drills (A-skip, build-up runs, change of direction, reverse lunge, single-leg RDL) never appear at Level 1. The Progress page shows criteria (consistent sessions at the current level, no pain, felt Good/Okay, readiness ≥ 7). **The user always decides**; nothing is automatic.
+The **workout** for each split is a simple ordered list of training exercises (`config/warmup.php` → `workouts`), each with a set/rep/rest prescription.
 
-## Exercise videos — status and how to finish curating
+**Levels** — 1 Re-entry (low impact, controlled), 2 Conditioning (moderate dynamic, greater range), 3 Performance Preparation (controlled acceleration, lateral movement). Level-2+ drills (A-skip, build-up runs) never appear at Level 1. **The user always decides**; nothing is automatic.
 
-Every exercise card has a video button. URLs were taken **verbatim from web-search results** and never constructed. Where possible, a second independent search confirmed the same URL and title.
+## Exercise animations
 
-| Status | Count | Exercises |
-|---|---|---|
-| Cross-checked (URL + title seen in two searches) | 27 | all others |
-| Seen in one search only (labelled "Please review") | 6 | banded glute bridge, side plank, easy jog, build-up runs, lateral shuffle, ramp-up sets |
-| **No curated video yet** (button reads **"Find a Video"** and opens a YouTube search) | 7 | brisk walking, easy stationary cycling, half-kneeling hip flexor rock, side-lying hip abduction, mini-band lateral walk, monster walk, calf raises |
-
-The build environment could not open YouTube directly, and its web-search quota ran out before the last 7 were found. Please:
-
-```bash
-php artisan videos:verify     # checks every link via YouTube oEmbed and prints the real title + channel
-php artisan videos:set calf-raises "https://www.youtube.com/watch?v=XXXXXXXXXXX" \
-    --title="…" --channel="…" --source=physiotherapy   # updates database/data/videos.php and the DB
-```
-
-Prefer short single-exercise videos from physiotherapists, sports-medicine organisations or S&C coaches.
+Instead of external videos, every exercise renders a **looping SVG stick-figure animation** keyed to its movement pattern (`animation` field on each exercise). `resources/js/components/exercise-animation.js` draws a standing rig driven by SMIL `<animateTransform>` for standing patterns (press, pull, squat, hinge, lunge, cardio, arm-circle, calf, twist, balance…) and small bespoke scenes for floor patterns (plank, bridge, dead-bug, crunch, side-lying). The figure is themed with CSS so it reads in both light and dark mode, loops forever, and works fully offline — no third-party links.
 
 ## Privacy
 
-Session history (including pain notes) and settings live only in the browser's localStorage. Nothing is sent to the server except the routine request (activity, time, intensity, level, equipment and readiness answers), which is computed and not stored.
+Session history and settings live only in the browser's localStorage. Nothing is sent to the server except the routine request (split, time, intensity, level, equipment), which is computed and not stored.
 
 ## Final quality-control checklist
 
-**Content** — ✅ 40 exercises · ✅ knee considerations · ✅ glute/piriformis considerations · ✅ dynamic warm-up prioritised · ✅ progressive loading · ✅ football, running and gym routines
-**Videos** — ✅ every exercise has a working video button · ✅ no fabricated URLs · ⚠️ 7 exercises still need a curated video (search fallback shown) and 6 are single-search; run `videos:verify` from a connected machine
-**Functionality** — ✅ timers · ✅ navigation · ✅ Workout Mode · ✅ progress tracking · ✅ routine builder · ✅ mobile layout (no horizontal scroll at 390 px) · ✅ all buttons wired (checked with an automated Chromium run)
-**Safety** — ✅ no diagnosis · ✅ no "prevents injury" claims (tested) · ✅ no aggressive stretching · ✅ no sudden high-impact progression (tested) · ✅ symptom warning system
+**Content** — ✅ 72 warm-up + workout exercises · ✅ muscle-specific warm-up per split · ✅ full workout per split (6 exercises each) · ✅ Push / Pull / Legs / Cardio & Core
+**Animations** — ✅ every exercise has a looping animated demo · ✅ no external video links · ✅ works offline · ✅ themed for light/dark
+**Functionality** — ✅ timers · ✅ navigation · ✅ Workout Mode · ✅ progress tracking · ✅ routine builder · ✅ split hub (warm-up + workout) · ✅ mobile layout (no horizontal scroll)
+**Safety** — ✅ no diagnosis · ✅ no "prevents injury" claims (tested) · ✅ warm-up-first guidance

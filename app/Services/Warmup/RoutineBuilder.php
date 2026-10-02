@@ -436,9 +436,7 @@ class RoutineBuilder
             array_push($flat, ...$presented);
         }
 
-        $isFocus = in_array($request->program, ['knee', 'hip'], true);
-        $name = $request->title
-            ?? ($isFocus ? config("warmup.focus.{$request->program}.title") : $request->activity->shortLabel());
+        $name = $request->title ?? $request->activity->shortLabel();
 
         return [
             'title' => implode(' | ', array_filter([
@@ -451,7 +449,7 @@ class RoutineBuilder
             'program' => $request->program,
             'activity' => $request->activity->value,
             'activity_label' => $request->activity->label(),
-            'emoji' => $isFocus ? config("warmup.focus.{$request->program}.emoji") : $request->activity->emoji(),
+            'emoji' => $request->activity->emoji(),
             'minutes' => $request->minutes,
             'intensity' => $intensity->value,
             'requested_intensity' => $request->intensity->value,

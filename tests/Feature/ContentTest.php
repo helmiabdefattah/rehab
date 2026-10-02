@@ -5,7 +5,6 @@ namespace Tests\Feature;
 use App\Models\Exercise;
 use App\Models\Source;
 use App\Models\Tag;
-use App\Support\VideoCatalog;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -15,21 +14,48 @@ class ContentTest extends TestCase
 
     protected $seed = true;
 
-    public function test_database_has_30_to_40_complete_exercises(): void
+    public function test_database_has_complete_warm_up_and_workout_exercises(): void
     {
         $exercises = Exercise::with('tags')->get();
-        $this->assertGreaterThanOrEqual(30, $exercises->count());
-        $this->assertLessThanOrEqual(40, $exercises->count());
+        $this->assertGreaterThanOrEqual(60, $exercises->count());
+        $this->assertGreaterThanOrEqual(24, $exercises->where('section', 'workout')->count());
+        $this->assertGreaterThanOrEqual(30, $exercises->where('section', 'warmup')->count());
 
         foreach ($exercises as $e) {
-            foreach (['name', 'name_ar', 'category', 'purpose', 'why', 'difficulty', 'duration_label', 'reps_label', 'progression', 'regression'] as $field) {
+            foreach (['name', 'name_ar', 'category', 'purpose', 'why', 'difficulty', 'duration_label', 'reps_label', 'progression', 'regression', 'animation'] as $field) {
                 $this->assertNotEmpty($e->{$field}, "{$e->slug}.{$field}");
             }
-            foreach (['target_muscles', 'target_joints', 'instructions', 'mistakes', 'safety', 'activities'] as $field) {
+            foreach (['target_muscles', 'instructions', 'mistakes', 'safety', 'activities'] as $field) {
                 $this->assertNotEmpty($e->{$field}, "{$e->slug}.{$field}");
             }
+            $this->assertContains($e->section, ['warmup', 'workout'], "{$e->slug} section");
             $this->assertMatchesRegularExpression('/\p{Arabic}/u', $e->name_ar, "{$e->slug} Arabic name");
             $this->assertNotEmpty($e->tags, "{$e->slug} tags");
+        }
+    }
+
+    public function test_every_exercise_belongs_to_at_least_one_valid_split(): void
+    {
+        $splits = ['push', 'pull', 'legs', 'cardio-core'];
+
+        foreach (Exercise::all() as $e) {
+            $this->assertNotEmpty($e->activities, "{$e->slug} has splits");
+            $this->assertEmpty(array_diff($e->activities, $splits), "{$e->slug} valid splits");
+        }
+    }
+
+    public function test_each_split_has_a_full_workout(): void
+    {
+        foreach (['push', 'pull', 'legs', 'cardio-core'] as $split) {
+            $slugs = config("warmup.workouts.{$split}");
+            $this->assertCount(6, $slugs, "{$split} workout size");
+
+            foreach ($slugs as $slug) {
+                $exercise = Exercise::where('slug', $slug)->first();
+                $this->assertNotNull($exercise, "{$split}: {$slug} exists");
+                $this->assertSame('workout', $exercise->section, "{$slug} is a workout exercise");
+                $this->assertNotEmpty($exercise->sets, "{$slug} has a set prescription");
+            }
         }
     }
 
@@ -37,26 +63,8 @@ class ContentTest extends TestCase
     {
         $tags = Tag::pluck('name')->all();
 
-        foreach (['Knee-Friendly', 'Glute Activation', 'Hip Mobility', 'Piriformis-Friendly', 'Low Impact', 'Running', 'Football', 'Strength Training', 'Balance', 'Core'] as $tag) {
+        foreach (['Knee-Friendly', 'Glute Activation', 'Hip Mobility', 'Shoulder-Friendly', 'Compound', 'Core', 'Balance', 'Low Impact'] as $tag) {
             $this->assertContains($tag, $tags);
-        }
-    }
-
-    public function test_every_exercise_has_a_video_or_an_honest_search_fallback(): void
-    {
-        foreach (Exercise::all() as $e) {
-            if ($e->video_url) {
-                $this->assertNotNull($e->videoId(), "{$e->slug} has a parsable YouTube URL");
-                $this->assertStringStartsWith('https://www.youtube-nocookie.com/embed/', $e->embedUrl());
-                $this->assertContains($e->video_verification, ['confirmed', 'single']);
-            } else {
-                $this->assertStringStartsWith('https://www.youtube.com/results?search_query=', $e->videoSearchUrl());
-            }
-        }
-
-        foreach ((new VideoCatalog)->all() as $slug => $video) {
-            $this->assertNotNull(Exercise::where('slug', $slug)->first(), "videos.php slug {$slug} exists");
-            $this->assertMatchesRegularExpression('~^https://www\.youtube\.com/watch\?v=[A-Za-z0-9_-]{11}$~', $video['url']);
         }
     }
 
@@ -69,14 +77,6 @@ class ContentTest extends TestCase
                 $this->assertStringNotContainsString($claim, $text, "{$e->slug}: '{$claim}'");
             }
         }
-    }
-
-    public function test_piriformis_work_is_never_aggressive(): void
-    {
-        $figure4 = Exercise::where('slug', 'figure-4-rocks')->first();
-
-        $this->assertStringContainsString('not a forced stretch', $figure4->purpose);
-        $this->assertContains('hip', $figure4->caution);
     }
 
     public function test_sources_cover_all_topics(): void

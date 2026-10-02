@@ -2,22 +2,27 @@
 
 /*
 |--------------------------------------------------------------------------
-| Warm-up engine configuration
+| Warm-up & workout engine configuration
 |--------------------------------------------------------------------------
 |
-| Templates describe WHICH exercises may fill each part of a routine and in
-| what order. The RoutineBuilder decides WHICH candidate is used (level,
-| intensity, impact, equipment and readiness rules) and HOW LONG each item
-| runs so the routine fits the chosen time.
+| The app is organised around the training SPLIT you pick (push | pull |
+| legs | cardio-core). For each split there are two parts:
+|
+|   • a targeted WARM-UP, built from the templates below, that primes the
+|     exact muscles and joints you are about to train; and
+|   • the WORKOUT itself — the ordered list of training exercises in
+|     'workouts' below.
+|
+| Warm-up templates describe WHICH exercises may fill each stage and in what
+| order. The RoutineBuilder decides WHICH candidate is used (level, intensity,
+| impact, equipment) and HOW LONG each item runs so the routine fits the
+| chosen time.
 |
 | Slot format:
 |   'pick'   => candidate slugs in order of preference
 |   'levels' => [level => [slugs]]  optional override of 'pick' for a level
 |   'p'      => priority 1–4 (1 = always included, 4 = only when time allows)
-|   'keep'   => true: never trimmed from very short routines (sport-specific finishers)
-|
-| Items inside a stage keep the order they are listed in — this is what
-| creates the progression (e.g. walk → march → skip → jog → build-ups).
+|   'keep'   => true: never trimmed from very short routines
 */
 
 return [
@@ -25,7 +30,6 @@ return [
     'durations' => [5, 10, 15, 20],
 
     // Seconds between exercises in Workout Mode ("get ready" countdown).
-    // Transitions are counted inside the time budget.
     'transition_seconds' => 5,
 
     // Seconds per stage (heat, mobility, activation, dynamic) for each duration.
@@ -36,7 +40,7 @@ return [
         20 => ['heat' => 180, 'mobility' => 300, 'activation' => 330, 'dynamic' => 390],
     ],
 
-    // Share of the dynamic-stage budget moved to mobility/activation.
+    // Share of the dynamic-stage budget moved to mobility/activation for lighter sessions.
     'budget_shift' => [
         'intensity' => ['light' => 0.20, 'moderate' => 0.0, 'high' => -0.15],
         'readiness' => ['ready' => 0.0, 'unchecked' => 0.0, 'modify' => 0.25, 'caution' => 0.50],
@@ -47,20 +51,95 @@ return [
         'long-band' => 'Long resistance band',
         'step' => 'Step / box / stairs',
         'bike' => 'Stationary bike',
-        'ball' => 'Football',
     ],
 
-    'default_equipment' => ['mini-band', 'step'],
+    'default_equipment' => ['mini-band', 'long-band', 'step'],
 
+    // ⚡ Quick modes run a balanced full-body warm-up straight into Workout Mode.
     'quick' => [
-        5 => ['title' => '5-Min Express', 'activity' => 'general', 'intensity' => 'moderate'],
-        10 => ['title' => '10-Min Standard', 'activity' => 'general', 'intensity' => 'moderate'],
-        15 => ['title' => '15-Min Complete', 'activity' => 'general', 'intensity' => 'moderate'],
+        5 => ['title' => '5-Min Express', 'activity' => 'cardio-core', 'program' => 'full-body', 'intensity' => 'moderate'],
+        10 => ['title' => '10-Min Standard', 'activity' => 'cardio-core', 'program' => 'full-body', 'intensity' => 'moderate'],
+        15 => ['title' => '15-Min Complete', 'activity' => 'cardio-core', 'program' => 'full-body', 'intensity' => 'moderate'],
+    ],
+
+    // The workout itself, per split — ordered training exercises.
+    'workouts' => [
+        'push' => ['barbell-bench-press', 'overhead-press', 'incline-dumbbell-press', 'chest-dip', 'triceps-pushdown', 'dumbbell-lateral-raise'],
+        'pull' => ['pull-up', 'lat-pulldown', 'barbell-row', 'seated-cable-row', 'face-pull', 'dumbbell-biceps-curl'],
+        'legs' => ['back-squat', 'romanian-deadlift', 'leg-press', 'walking-lunge', 'lying-leg-curl', 'standing-calf-raise'],
+        'cardio-core' => ['treadmill-intervals', 'rowing-machine', 'hanging-leg-raise', 'cable-crunch', 'russian-twist', 'plank-hold'],
     ],
 
     'templates' => [
 
-        'gym' => [
+        /*
+         | PUSH — prime the shoulders, scapulae and wrists, switch on the
+         | rotator cuff and upper back, then rehearse the pressing pattern.
+         */
+        'push' => [
+            'budgets' => [
+                5 => ['heat' => 45, 'mobility' => 120, 'activation' => 105, 'dynamic' => 30],
+                10 => ['heat' => 90, 'mobility' => 240, 'activation' => 210, 'dynamic' => 60],
+                15 => ['heat' => 120, 'mobility' => 330, 'activation' => 300, 'dynamic' => 150],
+                20 => ['heat' => 150, 'mobility' => 420, 'activation' => 390, 'dynamic' => 240],
+            ],
+            'heat' => [
+                ['pick' => ['brisk-walking', 'marching-in-place'], 'p' => 1],
+                ['pick' => ['arm-circles'], 'p' => 2],
+            ],
+            'mobility' => [
+                ['pick' => ['shoulder-pass-through'], 'p' => 1],
+                ['pick' => ['wall-slides'], 'p' => 1],
+                ['pick' => ['wrist-forearm-circles'], 'p' => 2],
+                ['pick' => ['cat-cow'], 'p' => 3],
+                ['pick' => ['open-book'], 'p' => 3],
+            ],
+            'activation' => [
+                ['pick' => ['band-pull-apart'], 'p' => 1],
+                ['pick' => ['band-external-rotation'], 'p' => 1],
+                ['pick' => ['scapular-push-up'], 'p' => 2],
+            ],
+            'dynamic' => [
+                ['pick' => ['ramp-up-sets'], 'p' => 1, 'keep' => true],
+            ],
+        ],
+
+        /*
+         | PULL — open the thoracic spine and shoulders, switch on the lats,
+         | mid-back and rear delts, then rehearse the pulling pattern.
+         */
+        'pull' => [
+            'budgets' => [
+                5 => ['heat' => 45, 'mobility' => 120, 'activation' => 105, 'dynamic' => 30],
+                10 => ['heat' => 90, 'mobility' => 240, 'activation' => 210, 'dynamic' => 60],
+                15 => ['heat' => 120, 'mobility' => 330, 'activation' => 300, 'dynamic' => 150],
+                20 => ['heat' => 150, 'mobility' => 420, 'activation' => 390, 'dynamic' => 240],
+            ],
+            'heat' => [
+                ['pick' => ['brisk-walking', 'marching-in-place'], 'p' => 1],
+                ['pick' => ['arm-circles'], 'p' => 2],
+            ],
+            'mobility' => [
+                ['pick' => ['cat-cow'], 'p' => 1],
+                ['pick' => ['shoulder-pass-through'], 'p' => 1],
+                ['pick' => ['open-book'], 'p' => 2],
+                ['pick' => ['wrist-forearm-circles'], 'p' => 3],
+            ],
+            'activation' => [
+                ['pick' => ['band-pull-apart'], 'p' => 1],
+                ['pick' => ['scapular-pull'], 'p' => 1],
+                ['pick' => ['band-external-rotation'], 'p' => 2],
+            ],
+            'dynamic' => [
+                ['pick' => ['ramp-up-sets'], 'p' => 1, 'keep' => true],
+            ],
+        ],
+
+        /*
+         | LEGS — mobilise ankles, hips and knees, fire up the glutes and
+         | knee-supporting muscles, then rehearse squat and hinge patterns.
+         */
+        'legs' => [
             'heat' => [
                 ['pick' => ['easy-cycling', 'brisk-walking', 'marching-in-place'], 'p' => 1],
                 ['pick' => ['marching-in-place'], 'p' => 3],
@@ -68,33 +147,32 @@ return [
             'mobility' => [
                 ['pick' => ['ankle-rocks'], 'p' => 1],
                 ['pick' => ['standing-hip-cars'], 'p' => 1],
-                ['pick' => ['hip-90-90', 'figure-4-rocks'], 'p' => 2],
+                ['pick' => ['leg-swings'], 'p' => 2],
+                ['pick' => ['hamstring-scoops'], 'p' => 2],
                 ['pick' => ['hip-flexor-rock'], 'p' => 3],
-                ['pick' => ['hamstring-scoops', 'leg-swings'], 'p' => 3],
-                ['pick' => ['open-book'], 'p' => 2],
-                ['pick' => ['arm-circles'], 'p' => 2],
+                ['pick' => ['hip-90-90', 'figure-4-rocks'], 'p' => 3],
                 ['pick' => ['adductor-rockback'], 'p' => 4],
             ],
             'activation' => [
                 ['pick' => ['banded-glute-bridge', 'glute-bridge'], 'p' => 1],
                 ['pick' => ['clamshell', 'side-lying-hip-abduction'], 'p' => 2],
-                ['pick' => ['dead-bug', 'bird-dog'], 'p' => 2],
-                ['pick' => ['terminal-knee-extension', 'calf-raises'], 'p' => 3],
-                ['pick' => ['lateral-band-walk', 'monster-walk', 'side-lying-hip-abduction'], 'p' => 3],
-                ['pick' => ['bird-dog', 'forearm-plank'], 'p' => 4],
+                ['pick' => ['calf-raises'], 'p' => 2],
+                ['pick' => ['lateral-band-walk', 'monster-walk'], 'p' => 3],
                 ['pick' => ['single-leg-balance'], 'p' => 4],
             ],
             'dynamic' => [
                 ['pick' => ['mini-squat', 'sit-to-stand'], 'levels' => [1 => ['sit-to-stand', 'mini-squat']], 'p' => 1],
                 ['pick' => ['hip-hinge'], 'p' => 1],
-                ['pick' => ['step-up', 'reverse-lunge'], 'levels' => [3 => ['reverse-lunge', 'step-up']], 'p' => 3],
-                ['pick' => ['single-leg-rdl'], 'p' => 4],
+                ['pick' => ['reverse-lunge', 'step-up'], 'p' => 3],
                 ['pick' => ['ramp-up-sets'], 'p' => 1, 'keep' => true],
             ],
         ],
 
-        'running' => [
-            // Running & football get a larger dynamic stage for gradual impact exposure.
+        /*
+         | CARDIO & CORE — raise the heart rate gradually, mobilise the spine
+         | and hips, brace the core, then build running mechanics and pace.
+         */
+        'cardio-core' => [
             'budgets' => [
                 5 => ['heat' => 60, 'mobility' => 75, 'activation' => 75, 'dynamic' => 90],
                 10 => ['heat' => 90, 'mobility' => 135, 'activation' => 150, 'dynamic' => 225],
@@ -103,175 +181,58 @@ return [
             ],
             'heat' => [
                 ['pick' => ['brisk-walking', 'marching-in-place'], 'p' => 1],
+                ['pick' => ['arm-circles'], 'p' => 3],
             ],
             'mobility' => [
-                ['pick' => ['ankle-rocks'], 'p' => 1],
+                ['pick' => ['standing-hip-cars'], 'p' => 1],
                 ['pick' => ['leg-swings'], 'p' => 1],
-                ['pick' => ['standing-hip-cars'], 'p' => 2],
-                ['pick' => ['hamstring-scoops'], 'p' => 2],
-                ['pick' => ['hip-flexor-rock'], 'p' => 3],
-                ['pick' => ['hip-90-90', 'figure-4-rocks'], 'p' => 3],
-                ['pick' => ['adductor-rockback'], 'p' => 4],
-                ['pick' => ['arm-circles'], 'p' => 4],
+                ['pick' => ['open-book'], 'p' => 2],
+                ['pick' => ['cat-cow'], 'p' => 2],
+                ['pick' => ['ankle-rocks'], 'p' => 3],
             ],
             'activation' => [
-                ['pick' => ['calf-raises'], 'p' => 1],
-                ['pick' => ['glute-bridge', 'banded-glute-bridge'], 'levels' => [2 => ['banded-glute-bridge', 'glute-bridge'], 3 => ['banded-glute-bridge', 'glute-bridge']], 'p' => 1],
-                ['pick' => ['lateral-band-walk', 'side-lying-hip-abduction'], 'p' => 2],
-                ['pick' => ['single-leg-balance'], 'p' => 2],
-                ['pick' => ['mini-squat', 'sit-to-stand'], 'p' => 3],
-                ['pick' => ['single-leg-rdl', 'clamshell'], 'levels' => [1 => ['clamshell']], 'p' => 4],
-                ['pick' => ['side-plank', 'dead-bug'], 'p' => 4],
+                ['pick' => ['dead-bug'], 'p' => 1],
+                ['pick' => ['bird-dog'], 'p' => 1],
+                ['pick' => ['glute-bridge', 'banded-glute-bridge'], 'p' => 2],
+                ['pick' => ['forearm-plank'], 'p' => 2],
+                ['pick' => ['side-plank'], 'p' => 3],
             ],
             'dynamic' => [
                 ['pick' => ['a-march', 'marching-in-place'], 'p' => 1],
                 ['pick' => ['a-skip'], 'p' => 2],
-                ['pick' => ['easy-jog', 'brisk-walking', 'marching-in-place'], 'p' => 1],
+                ['pick' => ['easy-jog', 'brisk-walking'], 'p' => 1],
                 ['pick' => ['build-up-runs'], 'p' => 2],
-            ],
-        ],
-
-        'football' => [
-            'budgets' => [
-                5 => ['heat' => 60, 'mobility' => 75, 'activation' => 75, 'dynamic' => 90],
-                10 => ['heat' => 90, 'mobility' => 135, 'activation' => 150, 'dynamic' => 225],
-                15 => ['heat' => 120, 'mobility' => 210, 'activation' => 240, 'dynamic' => 330],
-                20 => ['heat' => 150, 'mobility' => 270, 'activation' => 300, 'dynamic' => 480],
-            ],
-            'heat' => [
-                ['pick' => ['brisk-walking', 'marching-in-place'], 'p' => 1],
-                ['pick' => ['marching-in-place'], 'p' => 2],
-            ],
-            'mobility' => [
-                ['pick' => ['ankle-rocks'], 'p' => 1],
-                ['pick' => ['standing-hip-cars'], 'p' => 1],
-                ['pick' => ['leg-swings'], 'p' => 1],
-                ['pick' => ['hip-90-90', 'figure-4-rocks'], 'p' => 2],
-                ['pick' => ['hamstring-scoops'], 'p' => 2],
-                ['pick' => ['adductor-rockback'], 'p' => 3],
-                ['pick' => ['hip-flexor-rock'], 'p' => 3],
-                ['pick' => ['open-book', 'arm-circles'], 'p' => 4],
-            ],
-            'activation' => [
-                ['pick' => ['banded-glute-bridge', 'glute-bridge'], 'p' => 1],
-                ['pick' => ['lateral-band-walk', 'side-lying-hip-abduction'], 'p' => 1],
-                ['pick' => ['calf-raises'], 'p' => 2],
-                ['pick' => ['single-leg-balance'], 'p' => 2],
-                ['pick' => ['monster-walk', 'clamshell'], 'p' => 3],
-                ['pick' => ['side-plank', 'dead-bug'], 'p' => 3],
-                ['pick' => ['mini-squat', 'sit-to-stand'], 'p' => 4],
-            ],
-            'dynamic' => [
-                ['pick' => ['easy-jog', 'a-march'], 'p' => 1],
-                ['pick' => ['lateral-shuffle'], 'p' => 1],
-                ['pick' => ['build-up-runs'], 'p' => 2],
-                ['pick' => ['change-of-direction'], 'p' => 2],
-                ['pick' => ['football-ball-work'], 'p' => 1, 'keep' => true],
-            ],
-        ],
-
-        'general' => [
-            'heat' => [
-                ['pick' => ['marching-in-place', 'brisk-walking'], 'p' => 1],
-            ],
-            'mobility' => [
-                ['pick' => ['standing-hip-cars'], 'p' => 1],
-                ['pick' => ['ankle-rocks'], 'p' => 1],
-                ['pick' => ['arm-circles'], 'p' => 2],
-                ['pick' => ['open-book'], 'p' => 2],
-                ['pick' => ['leg-swings', 'hamstring-scoops'], 'p' => 2],
-                ['pick' => ['hip-90-90', 'figure-4-rocks'], 'p' => 3],
-                ['pick' => ['hip-flexor-rock'], 'p' => 4],
-            ],
-            'activation' => [
-                ['pick' => ['glute-bridge', 'banded-glute-bridge'], 'p' => 1],
-                ['pick' => ['sit-to-stand', 'mini-squat'], 'levels' => [2 => ['mini-squat', 'sit-to-stand'], 3 => ['mini-squat', 'sit-to-stand']], 'p' => 1],
-                ['pick' => ['bird-dog', 'dead-bug'], 'p' => 2],
-                ['pick' => ['clamshell', 'side-lying-hip-abduction'], 'p' => 2],
-                ['pick' => ['calf-raises'], 'p' => 3],
-                ['pick' => ['single-leg-balance'], 'p' => 3],
-                ['pick' => ['forearm-plank'], 'p' => 4],
-            ],
-            'dynamic' => [
-                ['pick' => ['a-march', 'marching-in-place'], 'p' => 1],
-                ['pick' => ['step-up'], 'p' => 2],
                 ['pick' => ['lateral-shuffle'], 'p' => 3],
-                ['pick' => ['brisk-walking', 'easy-jog'], 'levels' => [3 => ['easy-jog', 'brisk-walking']], 'p' => 1],
             ],
         ],
 
         /*
-         | Focus programmes used by the "Knee Preparation" and
-         | "Hip & Glute Preparation" sections.
+         | FULL-BODY — the balanced routine used by the ⚡ Quick warm-ups.
          */
-        'knee' => [
-            'budgets' => [
-                5 => ['heat' => 45, 'mobility' => 60, 'activation' => 165, 'dynamic' => 30],
-                10 => ['heat' => 90, 'mobility' => 120, 'activation' => 330, 'dynamic' => 60],
-            ],
-            'heat' => [
-                ['pick' => ['easy-cycling', 'marching-in-place'], 'p' => 1],
-            ],
-            'mobility' => [
-                ['pick' => ['ankle-rocks'], 'p' => 1],
-                ['pick' => ['hamstring-scoops'], 'p' => 2],
-                ['pick' => ['leg-swings'], 'p' => 3],
-            ],
-            'activation' => [
-                ['pick' => ['calf-raises'], 'p' => 1],
-                ['pick' => ['sit-to-stand', 'mini-squat'], 'levels' => [2 => ['mini-squat', 'sit-to-stand'], 3 => ['mini-squat', 'sit-to-stand']], 'p' => 1],
-                ['pick' => ['terminal-knee-extension', 'mini-squat'], 'p' => 2],
-                ['pick' => ['step-up'], 'p' => 2],
-                ['pick' => ['single-leg-balance'], 'p' => 2],
-                ['pick' => ['banded-glute-bridge', 'glute-bridge'], 'p' => 3],
-                ['pick' => ['lateral-band-walk', 'side-lying-hip-abduction'], 'p' => 3],
-            ],
-            'dynamic' => [
-                ['pick' => ['a-march', 'marching-in-place'], 'p' => 2],
-            ],
-        ],
-
-        'hip' => [
-            'budgets' => [
-                5 => ['heat' => 45, 'mobility' => 105, 'activation' => 120, 'dynamic' => 30],
-                10 => ['heat' => 90, 'mobility' => 210, 'activation' => 240, 'dynamic' => 60],
-            ],
+        'full-body' => [
             'heat' => [
                 ['pick' => ['marching-in-place', 'brisk-walking'], 'p' => 1],
             ],
             'mobility' => [
                 ['pick' => ['standing-hip-cars'], 'p' => 1],
-                ['pick' => ['hip-90-90'], 'p' => 1],
-                ['pick' => ['figure-4-rocks'], 'p' => 2],
+                ['pick' => ['arm-circles'], 'p' => 1],
                 ['pick' => ['leg-swings'], 'p' => 2],
-                ['pick' => ['adductor-rockback'], 'p' => 3],
-                ['pick' => ['hip-flexor-rock'], 'p' => 3],
+                ['pick' => ['open-book'], 'p' => 2],
+                ['pick' => ['ankle-rocks'], 'p' => 3],
             ],
             'activation' => [
                 ['pick' => ['glute-bridge', 'banded-glute-bridge'], 'p' => 1],
-                ['pick' => ['clamshell'], 'p' => 1],
-                ['pick' => ['side-lying-hip-abduction'], 'p' => 2],
-                ['pick' => ['lateral-band-walk'], 'p' => 2],
-                ['pick' => ['monster-walk'], 'p' => 3],
-                ['pick' => ['side-plank', 'bird-dog'], 'p' => 3],
-                ['pick' => ['single-leg-rdl', 'single-leg-balance'], 'p' => 4],
+                ['pick' => ['dead-bug'], 'p' => 2],
+                ['pick' => ['band-pull-apart'], 'p' => 2],
+                ['pick' => ['calf-raises'], 'p' => 3],
+                ['pick' => ['clamshell'], 'p' => 3],
             ],
             'dynamic' => [
-                ['pick' => ['a-march', 'marching-in-place'], 'p' => 2],
+                ['pick' => ['a-march', 'marching-in-place'], 'p' => 1],
+                ['pick' => ['mini-squat'], 'p' => 2],
+                ['pick' => ['lateral-shuffle'], 'p' => 3],
+                ['pick' => ['brisk-walking', 'easy-jog'], 'p' => 1],
             ],
-        ],
-    ],
-
-    'focus' => [
-        'knee' => [
-            'title' => 'Knee Preparation',
-            'emoji' => '🦵',
-            'durations' => [5, 10],
-        ],
-        'hip' => [
-            'title' => 'Hip & Glute Preparation',
-            'emoji' => '🧘',
-            'durations' => [5, 10],
         ],
     ],
 ];
