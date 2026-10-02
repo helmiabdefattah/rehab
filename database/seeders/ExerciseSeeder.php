@@ -15,10 +15,8 @@ class ExerciseSeeder extends Seeder
     public function run(): void
     {
         $exercises = require database_path('data/exercises.php');
-        $videos = require database_path('data/videos.php');
 
         foreach ($exercises as $index => $data) {
-            $video = $videos[$data['slug']] ?? null;
             $tags = $data['tags'];
 
             if ($data['impact'] === 'Low') {
@@ -31,13 +29,9 @@ class ExerciseSeeder extends Seeder
                 ['slug' => $data['slug']],
                 [
                     ...$data,
+                    'section' => $data['section'] ?? 'warmup',
                     'cues' => $data['cues'] ?? null,
-                    'video_url' => $video['url'] ?? null,
-                    'video_title' => $video['title'] ?? null,
-                    'video_channel' => $video['channel'] ?? null,
-                    'video_source_type' => $video['source_type'] ?? null,
-                    'video_verification' => $video['verification'] ?? null,
-                    'video_note' => $video['note'] ?? null,
+                    'sets' => $data['sets'] ?? null,
                     'sort_order' => $index + 1,
                 ],
             );

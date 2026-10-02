@@ -2,19 +2,16 @@ import { $, $$, esc, icon, pressOne } from '../lib/dom.js';
 import { getSettings, LEVELS } from '../lib/settings.js';
 import { read, write, remove } from '../lib/store.js';
 import { clock } from '../lib/format.js';
+import { animationSvg } from '../components/exercise-animation.js';
 import { WorkoutPlayer } from '../workout/player.js';
 import { showFinish } from '../workout/finish.js';
 import { toast } from '../components/toast.js';
 
 const STEP_COPY = {
-    1: ['What are you about to do?', 'Choose your activity. The routine progresses from general heat → mobility → activation → dynamic, activity-specific preparation.'],
-    2: ['Set up your session', 'Pick intensity, available time and your progression level. The routine adjusts automatically.'],
-    3: ['Daily readiness check', 'A quick check-in before you start. Your answers adjust intensity and exercise selection — they do not diagnose anything.'],
-    4: ['Your warm-up', 'Review the routine, then start Workout Mode.'],
+    1: ['What are you training today?', 'Choose your split. The warm-up primes exactly those muscles — heat → mobility → activation → movement rehearsal.'],
+    2: ['Set up your session', 'Pick intensity, available time and your level. The routine adjusts automatically.'],
+    3: ['Your warm-up', 'Review the routine, then start Workout Mode.'],
 };
-
-const STATUS_CLASS = { ready: 'callout-ok', modify: 'callout-warn', caution: 'callout-danger', unchecked: 'callout-info' };
-const STATUS_ICON = { ready: 'check', modify: 'info', caution: 'alert', unchecked: 'info' };
 
 export function initBuilder() {
     const root = $('[data-builder]');
@@ -22,7 +19,6 @@ export function initBuilder() {
 
     const settings = getSettings();
     const remembered = read('builder', {}) || {};
-    const questions = $$('[data-question]', root).map((q) => q.dataset.question);
 
     const state = {
         step: 1,
@@ -31,8 +27,6 @@ export function initBuilder() {
         minutes: remembered.minutes || 10,
         level: settings.level,
         equipment: new Set(settings.equipment),
-        answers: Object.fromEntries(questions.map((q) => [q, null])),
-        score: 7,
         routine: null,
     };
 
@@ -67,33 +61,8 @@ export function initBuilder() {
         renderEquipment();
     });
 
-    $('[data-questions]', root).addEventListener('click', (e) => {
-        const b = e.target.closest('button[data-value]');
-        if (!b) return;
-        const q = b.closest('[data-question]').dataset.question;
-        state.answers[q] = b.dataset.value === '1';
-        pressOne(b.parentElement, b.dataset.value);
-        updateNav();
-    });
-
-    $('[data-all-no]', root).addEventListener('click', () => {
-        questions.forEach((q) => {
-            state.answers[q] = false;
-            pressOne($(`[data-question="${q}"] .yes-no`, root), '0');
-        });
-        updateNav();
-    });
-
-    const score = $('[data-score]', root);
-    const scoreOut = $('[data-score-out]', root);
-    score.addEventListener('input', () => {
-        state.score = Number(score.value);
-        scoreOut.textContent = state.score;
-    });
-
     nextBtn.addEventListener('click', () => {
-        if (state.step === 3) return goTo(4);
-        if (state.step === 4) return startWorkout();
+        if (state.step === 3) return startWorkout();
         goTo(state.step + 1);
     });
 
@@ -105,8 +74,6 @@ export function initBuilder() {
     function selectActivity(activity) {
         state.activity = activity;
         $$('[data-activity]', root).forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.activity === activity)));
-        if (activity === 'football') state.equipment.add('ball');
-        renderEquipment();
         updateNav();
     }
 
@@ -116,16 +83,15 @@ export function initBuilder() {
 
     function stepValid(step) {
         if (step === 1) return !!state.activity;
-        if (step === 3) return questions.every((q) => state.answers[q] !== null);
-        if (step === 4) return !!state.routine;
+        if (step === 3) return !!state.routine;
         return true;
     }
 
     function updateNav() {
         backBtn.hidden = state.step === 1;
         nextBtn.disabled = !stepValid(state.step);
-        const labels = { 1: 'Next', 2: 'Next: readiness check', 3: 'Build my warm-up', 4: 'Start Workout Mode' };
-        nextBtn.innerHTML = state.step === 4 ? `${icon('play', true)} ${labels[4]}` : `${labels[state.step]} ${icon('chevron-right')}`;
+        const labels = { 1: 'Next', 2: 'Build my warm-up', 3: 'Start Workout Mode' };
+        nextBtn.innerHTML = state.step === 3 ? `${icon('play', true)} ${labels[3]}` : `${labels[state.step]} ${icon('chevron-right')}`;
     }
 
     function goTo(step) {
@@ -138,7 +104,7 @@ export function initBuilder() {
         });
         $('[data-step-title]', root).textContent = STEP_COPY[step][0];
         $('[data-step-sub]', root).textContent = STEP_COPY[step][1];
-        if (step === 4) generate();
+        if (step === 3) generate();
         updateNav();
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -163,7 +129,6 @@ export function initBuilder() {
                     level: state.level,
                     equipment: [...state.equipment],
                     transition: getSettings().getReady,
-                    readiness: { checked: true, ...state.answers, score: state.score },
                 }),
             });
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -203,13 +168,13 @@ export function initBuilder() {
 
     const preset = document.getElementById('routine-data');
     if (preset) {
-        // Quick / focus warm-up: skip the wizard and launch Workout Mode immediately.
+        // Quick warm-up: skip the wizard and launch Workout Mode immediately.
         const routine = JSON.parse(preset.textContent);
-        state.step = 4;
-        $$('[data-step]', root).forEach((s) => (s.hidden = s.dataset.step !== '4'));
+        state.step = 3;
+        $$('[data-step]', root).forEach((s) => (s.hidden = s.dataset.step !== '3'));
         $('.wizard-steps', root).hidden = true;
         $('[data-step-title]', root).textContent = `${routine.emoji} ${routine.name}`;
-        $('[data-step-sub]', root).textContent = 'A balanced routine built from your saved level and equipment. Stop if anything feels sharp, unstable or swollen.';
+        $('[data-step-sub]', root).textContent = 'A balanced routine built from your saved level and equipment. Stop if anything feels sharp or unstable.';
         showRoutine(routine);
         backBtn.remove();
         if (root.dataset.autostart === '1') startWorkout();
@@ -243,7 +208,6 @@ export function initBuilder() {
 /* ------------------------------------------------------------ templates */
 
 function renderRoutine(r) {
-    const rd = r.readiness;
     let n = 0;
     const stages = r.stages
         .map(
@@ -263,18 +227,9 @@ function renderRoutine(r) {
     const list = (items) => (items?.length ? `<ul class="small">${items.map((m) => `<li>${esc(m)}</li>`).join('')}</ul>` : '');
 
     return `
-        <div class="callout ${STATUS_CLASS[rd.status] || 'callout-info'} readiness-banner">
-            ${icon(STATUS_ICON[rd.status] || 'info')}
-            <div>
-                <h3>${esc(rd.label)}${rd.score ? ` · ${rd.score}/10` : ''}</h3>
-                <p class="small"><strong>${esc(rd.headline)}</strong></p>
-                ${list(rd.messages)}
-                ${list(rd.advice)}
-            </div>
-        </div>
-
         <div class="section">
             <h2 style="margin:0">${esc(r.emoji)} ${esc(r.title)}</h2>
+            <p class="small muted" style="margin:6px 0 0">A warm-up built to prepare you for your ${esc(r.name)} session.</p>
             <div class="routine-summary">
                 <span class="badge">${icon('clock')} ${clock(r.total_seconds)}</span>
                 <span class="badge">${r.items.length} exercises</span>
@@ -291,12 +246,12 @@ function renderRoutine(r) {
 
         ${stages}
 
-        <p class="small muted section">Includes ${r.transition_seconds}-second “get ready” transitions. Stop if you feel sharp pain, instability, locking, significant swelling or anything unusual.</p>`;
+        <p class="small muted section">Includes ${r.transition_seconds}-second “get ready” transitions. Stop if you feel sharp pain or anything unusual.</p>`;
 }
 
 function renderItem(item, index) {
     const ex = item.exercise;
-    const video = esc(JSON.stringify(ex.video));
+    const payload = esc(JSON.stringify(ex.animation));
     return `
         <div class="routine-item" data-stage="${esc(item.stage)}">
             <span class="num">${index + 1}</span>
@@ -306,9 +261,8 @@ function renderItem(item, index) {
             </div>
             <div class="dur">${clock(item.seconds)}${item.per_side ? `<small>${clock(item.side_seconds)} / side</small>` : ''}</div>
             <div class="routine-item-actions">
-                <button type="button" class="btn btn-video btn-sm ${ex.video.embed ? '' : 'is-search'}" data-video="${video}">
-                    ${ex.video.embed ? `${icon('play', true)} Watch Video` : `${icon('search')} Find a Video`}
-                </button>
+                <span class="ex-anim ex-anim-sm" data-animation="${esc(ex.animation.pattern)}">${animationSvg(ex.animation.pattern)}</span>
+                <button type="button" class="btn btn-ghost btn-sm" data-animation-payload="${payload}">${icon('maximize')} View</button>
                 <details style="flex-basis:100%">
                     <summary class="small muted" style="cursor:pointer;font-weight:700">How to · ${esc(ex.purpose)}</summary>
                     <ol class="small" style="margin-top:6px">${ex.instructions.map((s) => `<li>${esc(s)}</li>`).join('')}</ol>

@@ -14,7 +14,9 @@ return new class extends Migration
             $table->string('name');
             $table->string('name_ar');
             $table->string('stage')->index();
+            $table->string('section')->default('warmup')->index();
             $table->string('category')->index();
+            $table->string('animation')->nullable();
             $table->json('focus');
             $table->json('target_muscles');
             $table->json('target_joints');
@@ -38,12 +40,7 @@ return new class extends Migration
             $table->text('regression');
             $table->json('caution');
             $table->json('cues')->nullable();
-            $table->string('video_url')->nullable();
-            $table->string('video_title')->nullable();
-            $table->string('video_channel')->nullable();
-            $table->string('video_source_type')->nullable();
-            $table->string('video_verification')->nullable();
-            $table->text('video_note')->nullable();
+            $table->json('sets')->nullable();
             $table->unsignedSmallInteger('sort_order')->default(0);
             $table->timestamps();
         });

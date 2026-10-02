@@ -15,8 +15,13 @@
 
         <dl class="ex-meta">
             <div class="full"><dt>Purpose</dt><dd>{{ $exercise->purpose }}</dd></div>
-            <div><dt>Duration</dt><dd>{{ $exercise->duration_label }}</dd></div>
-            <div><dt>Reps</dt><dd>{{ $exercise->reps_label }}</dd></div>
+            @if ($exercise->isWorkout() && $exercise->sets)
+                <div><dt>Sets</dt><dd>{{ $exercise->sets['sets'] }} × {{ $exercise->sets['reps'] }}</dd></div>
+                <div><dt>Rest</dt><dd>{{ $exercise->sets['rest'] }}</dd></div>
+            @else
+                <div><dt>Duration</dt><dd>{{ $exercise->duration_label }}</dd></div>
+                <div><dt>Reps</dt><dd>{{ $exercise->reps_label }}</dd></div>
+            @endif
             <div class="full"><dt>Target</dt><dd>{{ implode(' / ', $exercise->target_muscles) }}</dd></div>
             <div><dt>Difficulty</dt><dd>{{ $exercise->difficulty }}</dd></div>
             <div><dt>Impact</dt><dd>{{ $exercise->impact->value }}</dd></div>
@@ -67,7 +72,7 @@
         </details>
 
         <div class="ex-actions">
-            <x-video-button :exercise="$exercise" />
+            <button type="button" class="btn btn-ghost btn-sm" data-animation-payload="{{ json_encode($exercise->animationPayload()) }}"><x-icon name="activity" /> View animation</button>
         </div>
     </div>
 </article>

@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Enums\Activity;
 use App\Enums\Intensity;
 use App\Enums\Level;
-use App\Models\Exercise;
 use App\Services\Warmup\ReadinessInput;
 use App\Services\Warmup\RoutineBuilder;
 use App\Services\Warmup\RoutineRequest;
@@ -22,14 +21,14 @@ class WarmupController extends Controller
         ]);
     }
 
-    /** ⚡ Quick modes launch a balanced routine straight into Workout Mode. */
+    /** ⚡ Quick modes launch a balanced full-body warm-up straight into Workout Mode. */
     public function quick(Request $request, RoutineBuilder $builder, int $minutes): View
     {
         $quick = config("warmup.quick.{$minutes}");
         $prefs = WarmupPreferences::fromRequest($request);
 
         $routine = $builder->build(new RoutineRequest(
-            program: $quick['activity'],
+            program: $quick['program'],
             activity: Activity::from($quick['activity']),
             minutes: $minutes,
             intensity: Intensity::from($quick['intensity']),
@@ -44,39 +43,6 @@ class WarmupController extends Controller
         return $this->builderView(['routine' => $routine, 'autostart' => true]);
     }
 
-    public function focus(string $area): View
-    {
-        $exercises = Exercise::with('tags')
-            ->ordered()
-            ->get()
-            ->filter(fn (Exercise $e) => in_array($area, $e->focus, true));
-
-        return view('warmup.focus', [
-            'area' => $area,
-            'config' => config("warmup.focus.{$area}"),
-            'exercises' => $exercises,
-        ]);
-    }
-
-    public function startFocus(Request $request, RoutineBuilder $builder, string $area, int $minutes): View
-    {
-        $prefs = WarmupPreferences::fromRequest($request);
-
-        $routine = $builder->build(new RoutineRequest(
-            program: $area,
-            activity: Activity::General,
-            minutes: $minutes,
-            intensity: Intensity::Moderate,
-            level: $prefs->level,
-            equipment: $prefs->equipment,
-            readiness: ReadinessInput::unchecked(),
-            transitionSeconds: $prefs->transition,
-            source: 'focus',
-        ));
-
-        return $this->builderView(['routine' => $routine, 'autostart' => true]);
-    }
-
     private function builderView(array $data = []): View
     {
         return view('warmup.builder', [
@@ -85,7 +51,6 @@ class WarmupController extends Controller
             'intensities' => Intensity::cases(),
             'levels' => Level::cases(),
             'equipment' => config('warmup.equipment'),
-            'questions' => ReadinessInput::QUESTIONS,
             'preselected' => null,
             'routine' => null,
             'autostart' => false,

@@ -33,7 +33,7 @@
         </div>
         <div class="workout-secondary">
             <button type="button" class="btn btn-ghost btn-sm" data-action="restart"><x-icon name="restart" /> Restart</button>
-            <button type="button" class="btn btn-video btn-sm" data-action="video"><x-icon name="play" fill /> <span data-slot="video-label">Watch Video</span></button>
+            <button type="button" class="btn btn-ghost btn-sm" data-action="video"><x-icon name="maximize" /> <span data-slot="video-label">View animation</span></button>
         </div>
         <div class="workout-next">
             <div>

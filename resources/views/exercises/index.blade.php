@@ -1,8 +1,8 @@
 <x-layout title="Exercise Library" page="library">
     <header class="page-head">
         <span class="eyebrow">Exercise Library</span>
-        <h1>{{ $exercises->count() }} warm-up exercises</h1>
-        <p>Every exercise includes purpose, technique, common mistakes, safety notes, progressions and a demonstration video.</p>
+        <h1>{{ $exercises->count() }} warm-up &amp; workout exercises</h1>
+        <p>Every exercise includes purpose, technique, common mistakes, safety notes, progressions and a looping animated demonstration.</p>
     </header>
 
     <form method="get" action="{{ route('exercises.index') }}" class="stack" data-library-filters style="--stack-gap:12px">
@@ -22,20 +22,19 @@
                 </select>
             </div>
             <div class="field">
-                <label for="stage" class="small">Stage</label>
-                <select id="stage" name="stage" class="input">
-                    <option value="">All stages</option>
-                    @foreach ($stages as $stage)
-                        <option value="{{ $stage->value }}" @selected($filters['stage'] === $stage->value)>{{ $stage->number() }}. {{ $stage->label() }}</option>
-                    @endforeach
+                <label for="section" class="small">Part</label>
+                <select id="section" name="section" class="input">
+                    <option value="">Warm-up &amp; workout</option>
+                    <option value="warmup" @selected($filters['section'] === 'warmup')>Warm-up only</option>
+                    <option value="workout" @selected($filters['section'] === 'workout')>Workout only</option>
                 </select>
             </div>
             <div class="field">
-                <label for="activity" class="small">Suitable for</label>
+                <label for="activity" class="small">Training split</label>
                 <select id="activity" name="activity" class="input">
-                    <option value="">Any activity</option>
+                    <option value="">Any split</option>
                     @foreach ($activities as $activity)
-                        <option value="{{ $activity->value }}" @selected($filters['activity'] === $activity->value)>{{ $activity->emoji() }} {{ $activity->label() }}</option>
+                        <option value="{{ $activity->value }}" @selected($filters['activity'] === $activity->value)>{{ $activity->emoji() }} {{ $activity->shortLabel() }}</option>
                     @endforeach
                 </select>
             </div>
@@ -55,7 +54,7 @@
                 :hidden="! $visible->has($exercise->id)"
                 data-search="{{ mb_strtolower(implode(' ', [$exercise->name, $exercise->name_ar, $exercise->category, $exercise->purpose, implode(' ', $exercise->target_muscles), $exercise->tags->pluck('name')->implode(' ')])) }}"
                 data-tags="{{ $exercise->tags->pluck('slug')->implode(' ') }}"
-                data-stage-key="{{ $exercise->stage->value }}"
+                data-section="{{ $exercise->section }}"
                 data-activities="{{ implode(' ', $exercise->activities) }}"
             />
         @endforeach

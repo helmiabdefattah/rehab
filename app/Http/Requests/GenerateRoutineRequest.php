@@ -13,10 +13,6 @@ class GenerateRoutineRequest extends FormRequest
 {
     public function rules(): array
     {
-        $readiness = collect(array_keys(ReadinessInput::QUESTIONS))
-            ->mapWithKeys(fn ($key) => ["readiness.{$key}" => ['sometimes', 'boolean']])
-            ->all();
-
         return [
             'activity' => ['required', Rule::enum(Activity::class)],
             'minutes' => ['required', 'integer', Rule::in(config('warmup.durations'))],
@@ -25,10 +21,6 @@ class GenerateRoutineRequest extends FormRequest
             'equipment' => ['sometimes', 'array'],
             'equipment.*' => ['string', Rule::in(array_keys(config('warmup.equipment')))],
             'transition' => ['sometimes', 'integer', 'between:0,15'],
-            'readiness' => ['sometimes', 'array'],
-            'readiness.checked' => ['sometimes', 'boolean'],
-            'readiness.score' => ['sometimes', 'nullable', 'integer', 'between:1,10'],
-            ...$readiness,
         ];
     }
 
@@ -43,7 +35,7 @@ class GenerateRoutineRequest extends FormRequest
             intensity: Intensity::from($this->validated('intensity')),
             level: (int) $this->validated('level'),
             equipment: array_values($this->validated('equipment', [])),
-            readiness: ReadinessInput::fromArray($this->validated('readiness')),
+            readiness: ReadinessInput::unchecked(),
             transitionSeconds: (int) $this->validated('transition', config('warmup.transition_seconds')),
             source: 'builder',
         );

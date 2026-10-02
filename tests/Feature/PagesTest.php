@@ -22,22 +22,22 @@ class PagesTest extends TestCase
     {
         return [
             'home' => ['/', 'QUICK 10-MIN WARM-UP'],
-            'builder' => ['/warm-up', 'How do you feel today?'],
-            'builder preselected' => ['/warm-up?activity=running', 'data-preselected="running"'],
+            'home splits' => ['/', 'What are you training today?'],
+            'train push' => ['/train/push', 'Start Push warm-up'],
+            'train cardio-core' => ['/train/cardio-core', 'Cardio &amp; Core'],
+            'builder' => ['/warm-up', 'What are you training today?'],
+            'builder preselected' => ['/warm-up?activity=pull', 'data-preselected="pull"'],
             'quick 5' => ['/warm-up/quick/5', 'id="routine-data"'],
             'quick 10' => ['/warm-up/quick/10?level=2&equipment=mini-band', 'data-autostart="1"'],
             'quick 15' => ['/warm-up/quick/15', '15-Min Complete'],
-            'knee focus' => ['/warm-up/focus/knee', 'Not automatically prescribed'],
-            'hip focus' => ['/warm-up/focus/hip', 'not forcing the piriformis'],
-            'focus start' => ['/warm-up/focus/knee/start/5', 'id="routine-data"'],
-            'library' => ['/exercises', 'Watch Video'],
-            'library filtered' => ['/exercises?tag=core', 'data-library-grid'],
-            'exercise' => ['/exercises/glute-bridge', 'youtube-nocookie.com/embed/'],
-            'exercise without video' => ['/exercises/calf-raises', 'Find a Video'],
+            'library' => ['/exercises', 'View animation'],
+            'library filtered' => ['/exercises?section=workout', 'data-library-grid'],
+            'warm-up exercise' => ['/exercises/glute-bridge', 'data-animation='],
+            'workout exercise' => ['/exercises/barbell-bench-press', 'Barbell Bench Press'],
             'timer' => ['/timer', 'Interval'],
-            'progress' => ['/progress', 'Progression check'],
+            'progress' => ['/progress', 'Progress'],
             'settings' => ['/settings', 'Export backup'],
-            'safety' => ['/safety', 'not a medical device or substitute for individualized medical or physiotherapy advice'],
+            'safety' => ['/safety', 'not a medical device or a substitute'],
             'sources' => ['/sources', 'doi:10.1136/bmj.a2469'],
         ];
     }
@@ -48,22 +48,22 @@ class PagesTest extends TestCase
         $this->get($url)->assertOk()->assertSee($expected, false);
     }
 
-    public function test_unknown_quick_duration_and_exercise_return_404(): void
+    public function test_unknown_routes_return_404(): void
     {
         $this->get('/warm-up/quick/7')->assertNotFound();
         $this->get('/exercises/does-not-exist')->assertNotFound();
-        $this->get('/warm-up/focus/shoulder')->assertNotFound();
+        $this->get('/train/arms')->assertNotFound();
     }
 
-    public function test_video_payload_attribute_is_valid_json(): void
+    public function test_animation_payload_attribute_is_valid_json(): void
     {
         $html = $this->get('/exercises/glute-bridge')->getContent();
 
-        preg_match('/data-video="([^"]+)"/', $html, $m);
+        preg_match('/data-animation-payload="([^"]+)"/', $html, $m);
         $payload = json_decode(html_entity_decode($m[1], ENT_QUOTES), true);
 
         $this->assertSame('Glute Bridge', $payload['exercise']);
-        $this->assertSame('WtilA9IJX1c', $payload['id']);
+        $this->assertNotEmpty($payload['pattern']);
     }
 
     public function test_quick_links_use_preferences_from_query(): void

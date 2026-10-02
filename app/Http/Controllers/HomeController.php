@@ -12,7 +12,6 @@ class HomeController extends Controller
         return view('home', [
             'activities' => Activity::cases(),
             'quick' => config('warmup.quick'),
-            'focus' => config('warmup.focus'),
         ]);
     }
 }
