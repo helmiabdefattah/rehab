@@ -45,6 +45,58 @@
     </div>
 </template>
 
+<template id="workout-session-template">
+    <div class="workout" data-phase="work" role="dialog" aria-modal="true" aria-label="Workout">
+        <div class="workout-top">
+            <button type="button" class="icon-btn" data-action="end" aria-label="End workout" title="End workout"><x-icon name="x" /></button>
+            <span class="count" data-slot="count"></span>
+            <span class="total-left" data-slot="setinfo"></span>
+            <button type="button" class="icon-btn" data-action="sound" aria-label="Toggle sound" title="Sound"><x-icon name="volume" /></button>
+            <button type="button" class="icon-btn" data-action="fullscreen" aria-label="Full screen" title="Full screen"><x-icon name="maximize" /></button>
+        </div>
+        <div class="workout-overall" aria-hidden="true"><span data-slot="overall"></span></div>
+
+        <div class="workout-body" data-when="active">
+            <div class="workout-label" data-slot="label">Work</div>
+            <h2 class="workout-name" data-slot="name"></h2>
+            <div class="workout-ar" dir="rtl" lang="ar" data-slot="ar"></div>
+            <div class="workout-clock" data-slot="clock" role="timer" aria-live="off"></div>
+            <div class="workout-of" data-slot="reps"></div>
+            <div class="workout-bar" aria-hidden="true"><span data-slot="bar"></span></div>
+            <div class="workout-demo" data-slot="demo"></div>
+            <details class="workout-howto">
+                <summary>How to perform</summary>
+                <ol data-slot="steps"></ol>
+            </details>
+        </div>
+
+        <div class="workout-controls" data-when="active">
+            <button type="button" class="btn" data-action="prev"><x-icon name="skip-back" /> Previous</button>
+            <button type="button" class="btn btn-primary" data-action="done-set"><x-icon name="check" /> <span data-slot="primary-label">Set done</span></button>
+            <button type="button" class="btn" data-action="next"><x-icon name="skip-forward" /> Skip</button>
+        </div>
+        <div class="workout-secondary" data-when="active">
+            <button type="button" class="btn btn-ghost btn-sm" data-action="add-rest"><x-icon name="plus" /> +15s rest</button>
+            <button type="button" class="btn btn-ghost btn-sm" data-action="view"><x-icon name="maximize" /> View animation</button>
+        </div>
+        <div class="workout-next" data-when="active">
+            <div>
+                <small>Next</small>
+                <strong data-slot="next"></strong>
+            </div>
+        </div>
+
+        <div class="workout-body session-done" data-when="done">
+            <div class="done-hero">
+                <div class="big">🎉</div>
+                <h2>Workout complete</h2>
+                <p class="muted" data-slot="done-summary"></p>
+            </div>
+            <button type="button" class="btn btn-primary btn-lg" data-action="close"><x-icon name="check" /> Done</button>
+        </div>
+    </div>
+</template>
+
 <template id="finish-template">
     <div class="workout" data-phase="done" role="dialog" aria-modal="true" aria-label="Warm-up complete">
         <div class="workout-body" style="justify-content:flex-start">
@@ -102,7 +154,8 @@
                     <x-icon name="check" />
                     <div><h3>Session saved</h3><p class="small">Your progress dashboard has been updated.</p></div>
                 </div>
-                <a href="{{ route('timer') }}" class="btn btn-primary btn-lg btn-block"><x-icon name="timer" /> Open Training Timer</a>
+                <a href="#" class="btn btn-primary btn-lg btn-block" data-workout-link hidden><x-icon name="play" fill /> <span data-workout-label>Start workout</span></a>
+                <a href="{{ route('timer') }}" class="btn btn-outline btn-block"><x-icon name="timer" /> Open Training Timer</a>
                 <a href="{{ route('progress') }}" class="btn btn-outline btn-block"><x-icon name="chart" /> View My Progress</a>
                 <button type="button" class="btn btn-ghost btn-block" data-finish-close><x-icon name="list" /> Back to routine</button>
             </div>

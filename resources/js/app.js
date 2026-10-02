@@ -3,6 +3,7 @@ import { applyTheme, prefsQuery } from './lib/settings.js';
 import { unlockAudio } from './lib/cues.js';
 import { initAnimations, initAnimationButtons } from './components/exercise-animation.js';
 import { initHome } from './pages/home.js';
+import { initTrain } from './pages/train.js';
 import { initBuilder } from './pages/builder.js';
 import { initLibrary } from './pages/library.js';
 import { initProgress } from './pages/progress.js';
@@ -11,6 +12,7 @@ import { initSettings } from './pages/settings.js';
 
 const pages = {
     home: initHome,
+    train: initTrain,
     builder: initBuilder,
     library: initLibrary,
     progress: initProgress,

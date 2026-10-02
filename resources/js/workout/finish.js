@@ -1,5 +1,5 @@
 import { $, $$, cloneTemplate, pressOne, uid } from '../lib/dom.js';
-import { addSession } from '../lib/sessions.js';
+import { addSession, ACTIVITIES } from '../lib/sessions.js';
 import { duration } from '../lib/format.js';
 
 /** Completion screen with the post-session feedback form. */
@@ -91,9 +91,18 @@ export function showFinish({ routine, early, completed, skipped, elapsedSec }, {
             notes: $('[data-notes]', el).value.trim().slice(0, 500),
         });
 
+        // Offer to move straight into the matching split's workout.
+        const split = routine.activity;
+        const link = $('[data-workout-link]', el);
+        if (link && ACTIVITIES[split]) {
+            link.href = `/train/${split}`;
+            $('[data-workout-label]', el).textContent = `Start ${ACTIVITIES[split].label} workout`;
+            link.hidden = false;
+        }
+
         form.hidden = true;
         $('[data-saved]', el).hidden = false;
-        $('[data-saved] a', el)?.focus();
+        $('[data-saved] a:not([hidden])', el)?.focus();
     });
 
     $('[data-finish-close]', el).addEventListener('click', close);
