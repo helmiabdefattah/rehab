@@ -46,14 +46,50 @@ return [
         'readiness' => ['ready' => 0.0, 'unchecked' => 0.0, 'modify' => 0.25, 'caution' => 0.50],
     ],
 
+    // Gym equipment the user can mark as available. Only a few of these gate
+    // warm-up exercises (bands / step / bike / cardio machines); the rest cover
+    // the full gym so the list matches a typical setup.
     'equipment' => [
+        // Free weights
+        'dumbbells' => 'Dumbbells',
+        'barbell' => 'Barbell & plates',
+        'ez-bar' => 'EZ curl bar',
+        'kettlebell' => 'Kettlebell',
+        // Benches & racks
+        'bench' => 'Bench (flat / adjustable)',
+        'squat-rack' => 'Squat / power rack',
+        'smith-machine' => 'Smith machine',
+        // Resistance machines
+        'cable-machine' => 'Cable machine',
+        'lat-pulldown' => 'Lat pulldown machine',
+        'row-machine' => 'Seated row machine',
+        'leg-press' => 'Leg press machine',
+        'leg-machine' => 'Leg curl / extension machine',
+        // Bars & bodyweight
+        'pull-up-bar' => 'Pull-up bar',
+        'dip-station' => 'Dip bars / station',
+        // Cardio machines
+        'treadmill' => 'Treadmill',
+        'bike' => 'Stationary bike',
+        'elliptical' => 'Elliptical / cross-trainer',
+        'rowing-machine' => 'Rowing machine',
+        'stair-climber' => 'Stair climber',
+        // Bands & accessories
         'mini-band' => 'Mini band (loop)',
         'long-band' => 'Long resistance band',
         'step' => 'Step / box / stairs',
-        'bike' => 'Stationary bike',
+        'medicine-ball' => 'Medicine ball',
+        'foam-roller' => 'Foam roller',
+        'jump-rope' => 'Jump rope',
     ],
 
-    'default_equipment' => ['mini-band', 'long-band', 'step'],
+    // A full gym by default, so no warm-up exercise is filtered out.
+    'default_equipment' => [
+        'dumbbells', 'barbell', 'ez-bar', 'kettlebell', 'bench', 'squat-rack', 'smith-machine',
+        'cable-machine', 'lat-pulldown', 'row-machine', 'leg-press', 'leg-machine',
+        'pull-up-bar', 'dip-station', 'treadmill', 'bike', 'elliptical', 'rowing-machine',
+        'stair-climber', 'mini-band', 'long-band', 'step', 'medicine-ball', 'foam-roller', 'jump-rope',
+    ],
 
     // ⚡ Quick modes run a balanced full-body warm-up straight into Workout Mode.
     'quick' => [
