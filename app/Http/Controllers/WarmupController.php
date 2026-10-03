@@ -5,10 +5,6 @@ namespace App\Http\Controllers;
 use App\Enums\Activity;
 use App\Enums\Intensity;
 use App\Enums\Level;
-use App\Services\Warmup\ReadinessInput;
-use App\Services\Warmup\RoutineBuilder;
-use App\Services\Warmup\RoutineRequest;
-use App\Support\WarmupPreferences;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -21,26 +17,14 @@ class WarmupController extends Controller
         ]);
     }
 
-    /** ⚡ Quick modes launch a balanced full-body warm-up straight into Workout Mode. */
-    public function quick(Request $request, RoutineBuilder $builder, int $minutes): View
+    /**
+     * ⚡ Quick modes launch a balanced full-body warm-up straight into Workout
+     * Mode. The routine is built in the browser (offline-capable), so this
+     * only needs to render the shell with the chosen duration.
+     */
+    public function quick(int $minutes): View
     {
-        $quick = config("warmup.quick.{$minutes}");
-        $prefs = WarmupPreferences::fromRequest($request);
-
-        $routine = $builder->build(new RoutineRequest(
-            program: $quick['program'],
-            activity: Activity::from($quick['activity']),
-            minutes: $minutes,
-            intensity: Intensity::from($quick['intensity']),
-            level: $prefs->level,
-            equipment: $prefs->equipment,
-            readiness: ReadinessInput::unchecked(),
-            transitionSeconds: $prefs->transition,
-            source: 'quick',
-            title: $quick['title'],
-        ));
-
-        return $this->builderView(['routine' => $routine, 'autostart' => true]);
+        return $this->builderView(['quick' => $minutes, 'autostart' => true]);
     }
 
     private function builderView(array $data = []): View
@@ -52,6 +36,7 @@ class WarmupController extends Controller
             'levels' => Level::cases(),
             'equipment' => config('warmup.equipment'),
             'preselected' => null,
+            'quick' => null,
             'routine' => null,
             'autostart' => false,
             ...$data,

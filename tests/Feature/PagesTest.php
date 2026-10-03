@@ -27,9 +27,9 @@ class PagesTest extends TestCase
             'train cardio-core' => ['/train/cardio-core', 'Cardio &amp; Core'],
             'builder' => ['/warm-up', 'What are you training today?'],
             'builder preselected' => ['/warm-up?activity=pull', 'data-preselected="pull"'],
-            'quick 5' => ['/warm-up/quick/5', 'id="routine-data"'],
-            'quick 10' => ['/warm-up/quick/10?level=2&equipment=mini-band', 'data-autostart="1"'],
-            'quick 15' => ['/warm-up/quick/15', '15-Min Complete'],
+            'quick 5' => ['/warm-up/quick/5', 'data-quick="5"'],
+            'quick 10' => ['/warm-up/quick/10', 'data-autostart="1"'],
+            'quick 15' => ['/warm-up/quick/15', 'data-quick="15"'],
             'library' => ['/exercises', 'View animation'],
             'library filtered' => ['/exercises?section=workout', 'data-library-grid'],
             'warm-up exercise' => ['/exercises/glute-bridge', 'data-animation='],
@@ -66,15 +66,13 @@ class PagesTest extends TestCase
         $this->assertNotEmpty($payload['pattern']);
     }
 
-    public function test_quick_links_use_preferences_from_query(): void
+    public function test_quick_page_renders_the_client_build_shell(): void
     {
-        $html = $this->get('/warm-up/quick/10?level=3&equipment=bike,mini-band&transition=0')->getContent();
-        preg_match('~<script type="application/json" id="routine-data">(.*?)</script>~s', $html, $m);
-        $routine = json_decode($m[1], true);
-
-        $this->assertSame(3, $routine['level']);
-        $this->assertSame(0, $routine['transition_seconds']);
-        $this->assertSame(600, $routine['total_seconds']);
-        $this->assertSame('quick', $routine['source']);
+        // Quick warm-ups are now built in the browser (offline-capable), so the
+        // page is just the builder shell flagged to auto-start.
+        $this->get('/warm-up/quick/10')
+            ->assertOk()
+            ->assertSee('data-quick="10"', false)
+            ->assertSee('data-autostart="1"', false);
     }
 }

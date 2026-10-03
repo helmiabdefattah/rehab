@@ -1,6 +1,24 @@
-// ReadyUp service worker: pages are network-first (fresh routines), static assets are cache-first.
-const CACHE = 'readyup-v1';
-const OFFLINE_PAGES = ['/', '/timer', '/exercises', '/safety'];
+// ReadyUp service worker: pages are network-first, static assets are cache-first.
+// Warm-ups are built in the browser, so once these pages + assets are cached
+// the whole app (warm-up builder, workouts, timer, library) works offline.
+const CACHE = 'readyup-v2';
+const OFFLINE_PAGES = [
+    '/',
+    '/warm-up',
+    '/warm-up/quick/5',
+    '/warm-up/quick/10',
+    '/warm-up/quick/15',
+    '/train/push',
+    '/train/pull',
+    '/train/legs',
+    '/train/cardio-core',
+    '/timer',
+    '/exercises',
+    '/progress',
+    '/settings',
+    '/safety',
+    '/sources',
+];
 
 self.addEventListener('install', (event) => {
     event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(OFFLINE_PAGES)).catch(() => {}));
