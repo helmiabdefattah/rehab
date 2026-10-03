@@ -39,7 +39,8 @@ function boot() {
 
     pages[document.body.dataset.page]?.();
 
-    if ('serviceWorker' in navigator && location.protocol === 'https:') {
+    // Service workers need a secure context — that's HTTPS, or localhost/127.0.0.1 for dev.
+    if ('serviceWorker' in navigator && window.isSecureContext) {
         navigator.serviceWorker.register('/sw.js').catch(() => {});
     }
 }

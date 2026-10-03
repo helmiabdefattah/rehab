@@ -3,6 +3,7 @@ import { getSettings, LEVELS } from '../lib/settings.js';
 import { read, write, remove } from '../lib/store.js';
 import { clock } from '../lib/format.js';
 import { animationSvg } from '../components/exercise-animation.js';
+import { buildRoutine, quickRoutine } from '../warmup/engine.js';
 import { WorkoutPlayer } from '../workout/player.js';
 import { showFinish } from '../workout/finish.js';
 import { toast } from '../components/toast.js';
@@ -109,7 +110,7 @@ export function initBuilder() {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    async function generate() {
+    function generate() {
         state.routine = null;
         $('[data-routine-loading]', root).hidden = false;
         $('[data-routine-error]', root).hidden = true;
@@ -118,26 +119,23 @@ export function initBuilder() {
 
         write('builder', { intensity: state.intensity, minutes: state.minutes });
 
+        // Built entirely in the browser — works offline, no server round-trip.
         try {
-            const res = await fetch(root.dataset.api, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-                body: JSON.stringify({
-                    activity: state.activity,
-                    minutes: state.minutes,
-                    intensity: state.intensity,
-                    level: state.level,
-                    equipment: [...state.equipment],
-                    transition: getSettings().getReady,
-                }),
+            const data = buildRoutine({
+                program: state.activity,
+                activity: state.activity,
+                minutes: state.minutes,
+                intensity: state.intensity,
+                level: state.level,
+                equipment: [...state.equipment],
+                transition: getSettings().getReady,
+                source: 'builder',
             });
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            const { data } = await res.json();
             showRoutine(data);
         } catch (err) {
             $('[data-routine-loading]', root).hidden = true;
             $('[data-routine-error]', root).hidden = false;
-            $('[data-routine-error-text]', root).textContent = `Please check your connection and try again. (${err.message})`;
+            $('[data-routine-error-text]', root).textContent = `Couldn’t build the routine. (${err.message})`;
         }
     }
 
@@ -166,18 +164,19 @@ export function initBuilder() {
     pressOne($('[data-choice="level"]', root), state.level);
     $('[data-level-hint]', root).textContent = LEVELS[state.level].description;
 
-    const preset = document.getElementById('routine-data');
-    if (preset) {
-        // Quick warm-up: skip the wizard and launch Workout Mode immediately.
-        const routine = JSON.parse(preset.textContent);
+    const quickMins = Number(root.dataset.quick || 0);
+    if (quickMins) {
+        // ⚡ Quick warm-up: built in the browser from your saved prefs, then launched.
+        const s = getSettings();
+        const routine = quickRoutine(quickMins, { level: s.level, equipment: s.equipment, transition: s.getReady });
         state.step = 3;
-        $$('[data-step]', root).forEach((s) => (s.hidden = s.dataset.step !== '3'));
+        $$('[data-step]', root).forEach((st) => (st.hidden = st.dataset.step !== '3'));
         $('.wizard-steps', root).hidden = true;
         $('[data-step-title]', root).textContent = `${routine.emoji} ${routine.name}`;
         $('[data-step-sub]', root).textContent = 'A balanced routine built from your saved level and equipment. Stop if anything feels sharp or unstable.';
         showRoutine(routine);
         backBtn.remove();
-        if (root.dataset.autostart === '1') startWorkout();
+        if (root.dataset.autostart !== '0') startWorkout();
     } else if (root.dataset.preselected) {
         selectActivity(root.dataset.preselected);
         goTo(2);
@@ -187,7 +186,7 @@ export function initBuilder() {
 
     // Offer to resume an interrupted workout (e.g. the page was reloaded).
     const active = read('activeWorkout');
-    if (active?.routine && Date.now() - active.savedAt < 2 * 60 * 60 * 1000 && !preset) {
+    if (active?.routine && Date.now() - active.savedAt < 2 * 60 * 60 * 1000 && !quickMins) {
         const banner = $('[data-resume]', root);
         $('[data-resume-text]', root).textContent =
             `${active.routine.title} — stopped at exercise ${active.index + 1} of ${active.routine.items.length}.`;

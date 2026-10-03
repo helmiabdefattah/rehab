@@ -1,5 +1,5 @@
 <x-layout title="Build My Warm-Up" page="builder">
-    <div data-builder data-api="{{ route('api.routines.store') }}" data-preselected="{{ $preselected }}" data-autostart="{{ $autostart ? '1' : '0' }}">
+    <div data-builder data-preselected="{{ $preselected }}" data-quick="{{ $quick ?? '' }}" data-autostart="{{ $autostart ? '1' : '0' }}">
         @if ($routine)
             <script type="application/json" id="routine-data">@json($routine)</script>
         @endif

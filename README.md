@@ -23,7 +23,7 @@ A mobile-first web app organised around your **training split**: **Push**, **Pul
 | **Safety & Guidelines** | Why to warm up per split, stop signs, the four warm-up stages, intensity levels |
 | **Sources & Evidence** | References grouped by topic |
 | **Settings** | Level, default equipment, get-ready seconds, sound, 3-2-1 beeps, voice cues, vibration, keep-awake, dark/light/system theme, export/import/delete data |
-| **PWA** | Installable (Add to Home Screen), offline fallback for key pages over HTTPS |
+| **PWA / full offline** | Installable (Add to Home Screen). After one online load it works **fully offline**: warm-ups are generated in the browser (the routine engine is ported to JS and the exercise data is baked into the bundle), and the service worker precaches every key page (home, builder, the four split hubs, quick warm-ups, timer, library, progress, settings). Needs a secure context — HTTPS, or `localhost`/`127.0.0.1` for dev |
 
 ## Tech stack
 
@@ -66,7 +66,8 @@ On Windows (e.g. `D:\sites\rehab`), check that `extension=pdo_mysql` is enabled 
 Useful commands:
 
 ```bash
-php artisan db:seed --class=ExerciseSeeder   # re-load exercises/videos after editing database/data/*.php
+php artisan db:seed --class=ExerciseSeeder   # re-load exercises after editing database/data/*.php
+php artisan warmup:export-js                 # regenerate the offline JS data bundle after editing exercises/config
 php artisan test                             # full suite (uses in-memory SQLite by default)
 vendor/bin/pint                              # code style
 ```
@@ -93,9 +94,17 @@ The **workout** for each split is a simple ordered list of training exercises (`
 
 Instead of external videos, every exercise renders a **looping SVG stick-figure animation** keyed to its movement pattern (`animation` field on each exercise). `resources/js/components/exercise-animation.js` draws a standing rig driven by SMIL `<animateTransform>` for standing patterns (press, pull, squat, hinge, lunge, cardio, arm-circle, calf, twist, balance…) and small bespoke scenes for floor patterns (plank, bridge, dead-bug, crunch, side-lying). The figure is themed with CSS so it reads in both light and dark mode, loops forever, and works fully offline — no third-party links.
 
+## Offline
+
+The app is built to work **fully offline** after one online load (over HTTPS, or `localhost`/`127.0.0.1` in dev):
+
+- **Warm-ups are generated client-side.** `resources/js/warmup/engine.js` is a JavaScript port of the PHP `RoutineBuilder`, and `resources/js/data/warmup-data.js` (regenerated with `php artisan warmup:export-js`) bakes the warm-up exercises and templates into the bundle — so both the custom *Build My Warm-Up* and the ⚡ quick warm-ups build with no server round-trip. (The `POST /api/routines` endpoint still exists, server-side, for tests and external use, but the UI no longer needs it.)
+- **The service worker precaches** every key page (home, builder, the four `/train/{split}` hubs, quick warm-ups, timer, library, progress, settings, safety, sources) plus the built CSS/JS, so they open offline without having to be visited first.
+- **Everything else is already client-side**: the animations (inline SVG), Workout Mode, the guided workout player, and the training timer all run in the browser.
+
 ## Privacy
 
-Session history and settings live only in the browser's localStorage. Nothing is sent to the server except the routine request (split, time, intensity, level, equipment), which is computed and not stored.
+Session history and settings live only in the browser's localStorage. Nothing is sent to the server for building a routine — it is all computed in the browser and never stored.
 
 ## Final quality-control checklist
 
