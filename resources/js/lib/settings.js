@@ -2,7 +2,9 @@ import { read, write } from './store.js';
 
 export const DEFAULTS = Object.freeze({
     level: 1,
-    equipment: ['mini-band', 'step'],
+    // The equipment that actually gates warm-up exercises — selected by default
+    // so nothing is filtered out. Users toggle the rest in Settings.
+    equipment: ['mini-band', 'long-band', 'step', 'bike'],
     getReady: 5,
     sound: true,
     countdownBeeps: true,
